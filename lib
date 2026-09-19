@@ -5,45 +5,47 @@
 	local Lib = require(path.to.Lib)
 
 	local Window = Lib:CreateWindow({
-		Title = "My UI",              -- optional, default "Kelo"
-		ProfileName = "Player",       -- optional, defaults to your username
-		ProfileTag = "v1.0",          -- optional, small tag next to your name
-		Size = UDim2.fromOffset(700, 500), -- optional, default 860x620
-		SidebarWidth = 200,           -- optional, default 220
-		AccentColor = Color3.fromRGB(70, 145, 235), -- optional starting accent
+		Title = "My UI",
+		ProfileName = "Player",
+		ProfileTag = "v1.0",
+		Size = UDim2.fromOffset(700, 500),
+		SidebarWidth = 200,
+		AccentColor = Color3.fromRGB(70, 145, 235),
 	})
 
 	local Tab = Window:AddTab({ Name = "Main", Subtitle = "Most Popular" })
 
-	-- Panels group related controls. Three ways to make one:
-	local A = Tab:AddPanel("Option")                                -- title + checkbox header (default)
-	local B = Tab:AddPanel({ Title = "Info", Toggleable = false })   -- title only, no checkbox
-	local C = Tab:AddPanel({ Toggleable = false })                   -- no header at all, just a box
+	local A = Tab:AddPanel("Option")
+	local B = Tab:AddPanel({ Title = "Info", Toggleable = false })
+	local C = Tab:AddPanel({ Toggleable = false })
 
-	-- Everything below can be added to any panel (A, B, C, ...):
-	Panel:AddLabel({ Text = "Plain text, e.g. section notes", Muted = true })
-	Panel:AddDivider() -- a thin separator line
+	Panel:AddLabel({ Text = "Plain text", Muted = true })
+	Panel:AddDivider()
 	Panel:AddToggle({ Name = "Enable thing", Default = false, Callback = function(on) end })
 	Panel:AddSlider({ Name = "Amount", Min = 0, Max = 100, Default = 50, Callback = function(v) end })
 	Panel:AddDropdown({ Name = "Mode", Options = {"A", "B"}, Default = "A", Callback = function(v) end })
 	Panel:AddButton({ Name = "Do it", Accent = true, Callback = function() end })
 	Panel:AddTextbox({ Name = "Label", Placeholder = "...", Callback = function(text, enterPressed) end })
 	Panel:AddKeybind({ Name = "Bind", Default = Enum.KeyCode.E, Callback = function() end })
-	local Graph = Panel:AddGraph({ Name = "FPS", Points = 30, Min = 0, Suffix = " fps" })
-	Graph:Push(60) -- call this repeatedly (e.g. every frame) to feed the graph
 
-	-- Themes:
+	local Graph = Panel:AddGraph({
+		Name = "FPS",
+		Points = 30,
+		Min = 0,
+		Suffix = " fps"
+	})
+
+	Graph:Push(60)
+
 	local Window = Lib:CreateWindow({ Theme = "Ocean" })
-	-- Available themes: Default, Ocean, AmberGlow, Light, Amethyst, Green, Bloom, DarkBlue, Crimson, Monochrome
 	Window:SetTheme("Crimson")
-	Window:SetAccentColor("Blue") -- or Window:SetAccentColor(Color3.fromRGB(...))
-	-- Presets: Lib.Presets.Green / .Blue / .Purple / .Red
-	-- Full customization: Lib.Customization, Lib.Themes, Lib.Transparency, Lib.Style
+	Window:SetAccentColor("Blue")
 
-	Window.MainFrame -- the root Frame, e.g. Window.MainFrame.Visible = false to hide the whole UI
-	Window.Tabs      -- array of tabs in the order you added them, e.g. Window.Tabs[2]
+	Window.MainFrame
+	Window.Tabs
 ]]
 
+--// SERVICES ---------------------------------------------------------------
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -52,44 +54,34 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
---// COLORS / THEME -------------------------------------------------------
-
--- Set any UI color with RGB values:
--- Green = Color3.fromRGB(0, 255, 0)
---
--- You can change every part of the UI here without editing the UI code.
--- Example:
--- Background = Color3.fromRGB(0, 0, 0)
+--// COLORS / THEME ---------------------------------------------------------
 
 local Colors = {
-	-- Named colors used by the default Kelo palette.
-	Green       = Color3.fromRGB(0, 255, 0),
-	EerieBlack  = Color3.fromRGB(10, 12, 11),
+	Green = Color3.fromRGB(0, 255, 0),
+	EerieBlack = Color3.fromRGB(10, 12, 11),
 	RaisinBlack = Color3.fromRGB(18, 20, 19),
-	DarkGray    = Color3.fromRGB(40, 44, 42),
+	DarkGray = Color3.fromRGB(40, 44, 42),
 	CharlestonGreen = Color3.fromRGB(24, 27, 26),
-	DarkSlateGray   = Color3.fromRGB(30, 34, 32),
-	DarkGreen   = Color3.fromRGB(0, 140, 0),
-	Gainsboro   = Color3.fromRGB(235, 235, 235),
+	DarkSlateGray = Color3.fromRGB(30, 34, 32),
+	DarkGreen = Color3.fromRGB(0, 140, 0),
+	Gainsboro = Color3.fromRGB(235, 235, 235),
 	SpanishGray = Color3.fromRGB(140, 145, 142),
-	Charcoal    = Color3.fromRGB(30, 33, 32),
-	DavyGray    = Color3.fromRGB(55, 58, 57),
+	Charcoal = Color3.fromRGB(30, 33, 32),
+	DavyGray = Color3.fromRGB(55, 58, 57),
 
-	-- Semantic aliases kept public so existing configs do not break.
-	Background  = Color3.fromRGB(10, 12, 11),
-	Panel       = Color3.fromRGB(18, 20, 19),
-	Accent      = Color3.fromRGB(0, 255, 0),
-	AccentDim   = Color3.fromRGB(0, 140, 0),
-	Text        = Color3.fromRGB(235, 235, 235),
-	SubText     = Color3.fromRGB(140, 145, 142),
-	SliderFill  = Color3.fromRGB(55, 58, 57),
-	Button      = Color3.fromRGB(30, 33, 32),
-	ButtonText  = Color3.fromRGB(235, 235, 235),
-	Checkbox    = Color3.fromRGB(18, 20, 19),
-	Graph       = Color3.fromRGB(55, 58, 57),
-	Avatar      = Color3.fromRGB(0, 255, 0),
+	Background = Color3.fromRGB(10, 12, 11),
+	Panel = Color3.fromRGB(18, 20, 19),
+	Accent = Color3.fromRGB(0, 255, 0),
+	AccentDim = Color3.fromRGB(0, 140, 0),
+	Text = Color3.fromRGB(235, 235, 235),
+	SubText = Color3.fromRGB(140, 145, 142),
+	SliderFill = Color3.fromRGB(55, 58, 57),
+	Button = Color3.fromRGB(30, 33, 32),
+	ButtonText = Color3.fromRGB(235, 235, 235),
+	Checkbox = Color3.fromRGB(18, 20, 19),
+	Graph = Color3.fromRGB(55, 58, 57),
+	Avatar = Color3.fromRGB(0, 255, 0),
 
-	-- Compatibility names from older builds.
 	ButtonGray = Color3.fromRGB(30, 33, 32),
 	ButtonGrayTextGray = Color3.fromRGB(235, 235, 235),
 	CheckboxBlack = Color3.fromRGB(18, 20, 19),
@@ -97,8 +89,8 @@ local Colors = {
 	AvatarGreen = Color3.fromRGB(0, 255, 0),
 }
 
--- Lucide icons. These asset IDs are Roblox-hosted renditions of Lucide icons.
--- Icon names match the names used on https://lucide.dev/icons/.
+--// ICONS ------------------------------------------------------------------
+
 local LucideIcons = {
 	home = "rbxassetid://10723407389",
 	eye = "rbxassetid://10723346959",
@@ -130,37 +122,113 @@ local DefaultTabIcons = {
 	settings = "settings",
 }
 
--- Full customization. Edit only this section to reskin the entire library.
+--// CUSTOMIZATION ----------------------------------------------------------
+
 local Customization = {
 	Colors = {
-		Background = Colors.EerieBlack, Panel = Colors.RaisinBlack, Border = Colors.DarkGray,
-		Sidebar = Colors.CharlestonGreen, SidebarHover = Colors.DarkSlateGray,
-		Accent = Colors.Green, AccentDim = Colors.DarkGreen, Text = Colors.Gainsboro, SubText = Colors.SpanishGray,
-		Button = Colors.Charcoal, ButtonText = Colors.Gainsboro, Input = Colors.Charcoal,
-		SliderTrack = Colors.Charcoal, SliderFill = Colors.DavyGray, Checkbox = Colors.RaisinBlack, Graph = Colors.DavyGray, Avatar = Colors.Green,
-		White = Color3.fromRGB(255, 255, 255), Black = Color3.fromRGB(0, 0, 0),
+		Background = Colors.EerieBlack,
+		Panel = Colors.RaisinBlack,
+		Border = Colors.DarkGray,
+		Sidebar = Colors.CharlestonGreen,
+		SidebarHover = Colors.DarkSlateGray,
+		Accent = Colors.Green,
+		AccentDim = Colors.DarkGreen,
+		Text = Colors.Gainsboro,
+		SubText = Colors.SpanishGray,
+		Button = Colors.Charcoal,
+		ButtonText = Colors.Gainsboro,
+		Input = Colors.Charcoal,
+		SliderTrack = Colors.Charcoal,
+		SliderFill = Colors.DavyGray,
+		Checkbox = Colors.RaisinBlack,
+		Graph = Colors.DavyGray,
+		Avatar = Colors.Green,
+		White = Color3.fromRGB(255, 255, 255),
+		Black = Color3.fromRGB(0, 0, 0),
 	},
 
 	Transparency = {
-		Main = 0, Panel = 0, Sidebar = 0, Header = 0, Footer = 0, Button = 0, ButtonHover = 0,
-		Tab = 0, Input = 0, Slider = 0, SliderFill = 0, Checkbox = 0, Graph = 0, Border = 0,
+		Main = 0,
+		Panel = 0,
+		Sidebar = 0,
+		Header = 0,
+		Footer = 0,
+		Button = 0,
+		ButtonHover = 0,
+		Tab = 0,
+		Input = 0,
+		Slider = 0,
+		SliderFill = 0,
+		Checkbox = 0,
+		Graph = 0,
+		Border = 0,
 	},
+
 	Size = {
-		Window = UDim2.fromOffset(860,620), SidebarWidth = 220, HeaderHeight = 50, TabHeight = 44,
-		ButtonHeight = 32, InputHeight = 32, PanelWidth = 304, Padding = 14, Spacing = 12,
-		IconBox = 30, Icon = 16,
+		Window = UDim2.fromOffset(860, 620),
+		SidebarWidth = 220,
+		HeaderHeight = 50,
+		TabHeight = 44,
+		ButtonHeight = 32,
+		InputHeight = 32,
+		PanelWidth = 304,
+		Padding = 14,
+		Spacing = 12,
+		IconBox = 30,
+		Icon = 16,
 	},
-	Corners = { Main = 14, Panel = 10, Button = 6, Input = 6, Tab = 8, Small = 4 },
-	TextSize = { Title = 18, Header = 14, Normal = 13, Small = 11, Button = 13, Label = 12 },
-	Fonts = { Main = Enum.Font.GothamMedium, Bold = Enum.Font.GothamBold, Code = Enum.Font.Code },
-	Stroke = { Enabled = true, Thickness = 1, Transparency = 0 },
-	Animation = { Enabled = true, Speed = 0.15, HoverSpeed = 0.12 },
-	Drag = { Enabled = true, Mouse = true, Touch = true },
-	Behavior = { DestroyOldUI = true, CloseButton = true, AutoCenter = true },
+
+	Corners = {
+		Main = 14,
+		Panel = 10,
+		Button = 6,
+		Input = 6,
+		Tab = 8,
+		Small = 4,
+	},
+
+	TextSize = {
+		Title = 18,
+		Header = 14,
+		Normal = 13,
+		Small = 11,
+		Button = 13,
+		Label = 12,
+	},
+
+	Fonts = {
+		Main = Enum.Font.GothamMedium,
+		Bold = Enum.Font.GothamBold,
+		Code = Enum.Font.Code,
+	},
+
+	Stroke = {
+		Enabled = true,
+		Thickness = 1,
+		Transparency = 0,
+	},
+
+	Animation = {
+		Enabled = true,
+		Speed = 0.15,
+		HoverSpeed = 0.12,
+	},
+
+	Drag = {
+		Enabled = true,
+		Mouse = true,
+		Touch = true,
+	},
+
+	Behavior = {
+		DestroyOldUI = true,
+		CloseButton = true,
+		AutoCenter = true,
+	},
 }
 
--- Named themes. Add/edit themes here using the same format.
--- You can select one with CreateWindow({ Theme = "Ocean" }).
+--// THEMES -----------------------------------------------------------------
+
 local Themes = {
 	Default = {
 		TextColor = Color3.fromRGB(240, 240, 240),
@@ -195,32 +263,330 @@ local Themes = {
 		NotificationBackground = Color3.fromRGB(20, 20, 20),
 		NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
 	},
+
 	Ocean = {
-		TextColor = Color3.fromRGB(230, 240, 240), Background = Color3.fromRGB(20, 30, 30), Topbar = Color3.fromRGB(25, 40, 40), Shadow = Color3.fromRGB(15, 20, 20),
-		TabBackground = Color3.fromRGB(40, 60, 60), TabStroke = Color3.fromRGB(50, 70, 70), TabBackgroundSelected = Color3.fromRGB(100, 180, 180), TabTextColor = Color3.fromRGB(210, 230, 230), SelectedTabTextColor = Color3.fromRGB(20, 50, 50),
-		ElementBackground = Color3.fromRGB(30, 50, 50), ElementBackgroundHover = Color3.fromRGB(40, 60, 60), SecondaryElementBackground = Color3.fromRGB(30, 45, 45), ElementStroke = Color3.fromRGB(45, 70, 70), SecondaryElementStroke = Color3.fromRGB(40, 65, 65),
-		SliderBackground = Color3.fromRGB(0, 110, 110), SliderProgress = Color3.fromRGB(0, 140, 140), SliderStroke = Color3.fromRGB(0, 160, 160), ToggleBackground = Color3.fromRGB(30, 50, 50), ToggleEnabled = Color3.fromRGB(0, 130, 130), ToggleDisabled = Color3.fromRGB(70, 90, 90), ToggleEnabledStroke = Color3.fromRGB(0, 160, 160), ToggleDisabledStroke = Color3.fromRGB(85, 105, 105), ToggleEnabledOuterStroke = Color3.fromRGB(50, 100, 100), ToggleDisabledOuterStroke = Color3.fromRGB(45, 65, 65),
-		DropdownSelected = Color3.fromRGB(30, 60, 60), DropdownUnselected = Color3.fromRGB(25, 40, 40), InputBackground = Color3.fromRGB(30, 50, 50), InputStroke = Color3.fromRGB(50, 70, 70), PlaceholderColor = Color3.fromRGB(140, 160, 160),
-		NotificationBackground = Color3.fromRGB(25, 35, 35), NotificationActionsBackground = Color3.fromRGB(230, 240, 240),
+		TextColor = Color3.fromRGB(230, 240, 240),
+		Background = Color3.fromRGB(20, 30, 30),
+		Topbar = Color3.fromRGB(25, 40, 40),
+		Shadow = Color3.fromRGB(15, 20, 20),
+		TabBackground = Color3.fromRGB(40, 60, 60),
+		TabStroke = Color3.fromRGB(50, 70, 70),
+		TabBackgroundSelected = Color3.fromRGB(100, 180, 180),
+		TabTextColor = Color3.fromRGB(210, 230, 230),
+		SelectedTabTextColor = Color3.fromRGB(20, 50, 50),
+		ElementBackground = Color3.fromRGB(30, 50, 50),
+		ElementBackgroundHover = Color3.fromRGB(40, 60, 60),
+		SecondaryElementBackground = Color3.fromRGB(30, 45, 45),
+		ElementStroke = Color3.fromRGB(45, 70, 70),
+		SecondaryElementStroke = Color3.fromRGB(40, 65, 65),
+		SliderBackground = Color3.fromRGB(0, 110, 110),
+		SliderProgress = Color3.fromRGB(0, 140, 140),
+		SliderStroke = Color3.fromRGB(0, 160, 160),
+		ToggleBackground = Color3.fromRGB(30, 50, 50),
+		ToggleEnabled = Color3.fromRGB(0, 130, 130),
+		ToggleDisabled = Color3.fromRGB(70, 90, 90),
+		ToggleEnabledStroke = Color3.fromRGB(0, 160, 160),
+		ToggleDisabledStroke = Color3.fromRGB(85, 105, 105),
+		ToggleEnabledOuterStroke = Color3.fromRGB(50, 100, 100),
+		ToggleDisabledOuterStroke = Color3.fromRGB(45, 65, 65),
+		DropdownSelected = Color3.fromRGB(30, 60, 60),
+		DropdownUnselected = Color3.fromRGB(25, 40, 40),
+		InputBackground = Color3.fromRGB(30, 50, 50),
+		InputStroke = Color3.fromRGB(50, 70, 70),
+		PlaceholderColor = Color3.fromRGB(140, 160, 160),
+		NotificationBackground = Color3.fromRGB(25, 35, 35),
+		NotificationActionsBackground = Color3.fromRGB(230, 240, 240),
 	},
+
 	AmberGlow = {
-		TextColor = Color3.fromRGB(255,245,230), Background = Color3.fromRGB(45,30,20), Topbar = Color3.fromRGB(55,40,25), Shadow = Color3.fromRGB(35,25,15), TabBackground = Color3.fromRGB(75,50,35), TabStroke = Color3.fromRGB(90,60,45), TabBackgroundSelected = Color3.fromRGB(230,180,100), TabTextColor = Color3.fromRGB(250,220,200), SelectedTabTextColor = Color3.fromRGB(50,30,10), ElementBackground = Color3.fromRGB(60,45,35), ElementBackgroundHover = Color3.fromRGB(70,50,40), SecondaryElementBackground = Color3.fromRGB(55,40,30), ElementStroke = Color3.fromRGB(85,60,45), SecondaryElementStroke = Color3.fromRGB(75,50,35), SliderBackground = Color3.fromRGB(220,130,60), SliderProgress = Color3.fromRGB(250,150,75), SliderStroke = Color3.fromRGB(255,170,85), ToggleBackground = Color3.fromRGB(55,40,30), ToggleEnabled = Color3.fromRGB(240,130,30), ToggleDisabled = Color3.fromRGB(90,70,60), ToggleEnabledStroke = Color3.fromRGB(255,160,50), ToggleDisabledStroke = Color3.fromRGB(110,85,75), ToggleEnabledOuterStroke = Color3.fromRGB(200,100,50), ToggleDisabledOuterStroke = Color3.fromRGB(75,60,55), DropdownSelected = Color3.fromRGB(70,50,40), DropdownUnselected = Color3.fromRGB(55,40,30), InputBackground = Color3.fromRGB(60,45,35), InputStroke = Color3.fromRGB(90,65,50), PlaceholderColor = Color3.fromRGB(190,150,130), NotificationBackground = Color3.fromRGB(50,35,25), NotificationActionsBackground = Color3.fromRGB(245,230,215),
+		TextColor = Color3.fromRGB(255,245,230),
+		Background = Color3.fromRGB(45,30,20),
+		Topbar = Color3.fromRGB(55,40,25),
+		Shadow = Color3.fromRGB(35,25,15),
+		TabBackground = Color3.fromRGB(75,50,35),
+		TabStroke = Color3.fromRGB(90,60,45),
+		TabBackgroundSelected = Color3.fromRGB(230,180,100),
+		TabTextColor = Color3.fromRGB(250,220,200),
+		SelectedTabTextColor = Color3.fromRGB(50,30,10),
+		ElementBackground = Color3.fromRGB(60,45,35),
+		ElementBackgroundHover = Color3.fromRGB(70,50,40),
+		SecondaryElementBackground = Color3.fromRGB(55,40,30),
+		ElementStroke = Color3.fromRGB(85,60,45),
+		SecondaryElementStroke = Color3.fromRGB(75,50,35),
+		SliderBackground = Color3.fromRGB(220,130,60),
+		SliderProgress = Color3.fromRGB(250,150,75),
+		SliderStroke = Color3.fromRGB(255,170,85),
+		ToggleBackground = Color3.fromRGB(55,40,30),
+		ToggleEnabled = Color3.fromRGB(240,130,30),
+		ToggleDisabled = Color3.fromRGB(90,70,60),
+		ToggleEnabledStroke = Color3.fromRGB(255,160,50),
+		ToggleDisabledStroke = Color3.fromRGB(110,85,75),
+		ToggleEnabledOuterStroke = Color3.fromRGB(200,100,50),
+		ToggleDisabledOuterStroke = Color3.fromRGB(75,60,55),
+		DropdownSelected = Color3.fromRGB(70,50,40),
+		DropdownUnselected = Color3.fromRGB(55,40,30),
+		InputBackground = Color3.fromRGB(60,45,35),
+		InputStroke = Color3.fromRGB(90,65,50),
+		PlaceholderColor = Color3.fromRGB(190,150,130),
+		NotificationBackground = Color3.fromRGB(50,35,25),
+		NotificationActionsBackground = Color3.fromRGB(245,230,215),
 	},
+
 	Light = {
-		TextColor = Color3.fromRGB(40,40,40), Background = Color3.fromRGB(245,245,245), Topbar = Color3.fromRGB(230,230,230), Shadow = Color3.fromRGB(200,200,200), TabBackground = Color3.fromRGB(235,235,235), TabStroke = Color3.fromRGB(215,215,215), TabBackgroundSelected = Color3.fromRGB(255,255,255), TabTextColor = Color3.fromRGB(80,80,80), SelectedTabTextColor = Color3.fromRGB(0,0,0), ElementBackground = Color3.fromRGB(240,240,240), ElementBackgroundHover = Color3.fromRGB(225,225,225), SecondaryElementBackground = Color3.fromRGB(235,235,235), ElementStroke = Color3.fromRGB(210,210,210), SecondaryElementStroke = Color3.fromRGB(210,210,210), SliderBackground = Color3.fromRGB(150,180,220), SliderProgress = Color3.fromRGB(100,150,200), SliderStroke = Color3.fromRGB(120,170,220), ToggleBackground = Color3.fromRGB(220,220,220), ToggleEnabled = Color3.fromRGB(0,146,214), ToggleDisabled = Color3.fromRGB(150,150,150), ToggleEnabledStroke = Color3.fromRGB(0,170,255), ToggleDisabledStroke = Color3.fromRGB(170,170,170), ToggleEnabledOuterStroke = Color3.fromRGB(100,100,100), ToggleDisabledOuterStroke = Color3.fromRGB(180,180,180), DropdownSelected = Color3.fromRGB(230,230,230), DropdownUnselected = Color3.fromRGB(220,220,220), InputBackground = Color3.fromRGB(240,240,240), InputStroke = Color3.fromRGB(180,180,180), PlaceholderColor = Color3.fromRGB(140,140,140), NotificationBackground = Color3.fromRGB(250,250,250), NotificationActionsBackground = Color3.fromRGB(240,240,240),
+		TextColor = Color3.fromRGB(40,40,40),
+		Background = Color3.fromRGB(245,245,245),
+		Topbar = Color3.fromRGB(230,230,230),
+		Shadow = Color3.fromRGB(200,200,200),
+		TabBackground = Color3.fromRGB(235,235,235),
+		TabStroke = Color3.fromRGB(215,215,215),
+		TabBackgroundSelected = Color3.fromRGB(255,255,255),
+		TabTextColor = Color3.fromRGB(80,80,80),
+		SelectedTabTextColor = Color3.fromRGB(0,0,0),
+		ElementBackground = Color3.fromRGB(240,240,240),
+		ElementBackgroundHover = Color3.fromRGB(225,225,225),
+		SecondaryElementBackground = Color3.fromRGB(235,235,235),
+		ElementStroke = Color3.fromRGB(210,210,210),
+		SecondaryElementStroke = Color3.fromRGB(210,210,210),
+		SliderBackground = Color3.fromRGB(150,180,220),
+		SliderProgress = Color3.fromRGB(100,150,200),
+		SliderStroke = Color3.fromRGB(120,170,220),
+		ToggleBackground = Color3.fromRGB(220,220,220),
+		ToggleEnabled = Color3.fromRGB(0,146,214),
+		ToggleDisabled = Color3.fromRGB(150,150,150),
+		ToggleEnabledStroke = Color3.fromRGB(0,170,255),
+		ToggleDisabledStroke = Color3.fromRGB(170,170,170),
+		ToggleEnabledOuterStroke = Color3.fromRGB(100,100,100),
+		ToggleDisabledOuterStroke = Color3.fromRGB(180,180,180),
+		DropdownSelected = Color3.fromRGB(230,230,230),
+		DropdownUnselected = Color3.fromRGB(220,220,220),
+		InputBackground = Color3.fromRGB(240,240,240),
+		InputStroke = Color3.fromRGB(180,180,180),
+		PlaceholderColor = Color3.fromRGB(140,140,140),
+		NotificationBackground = Color3.fromRGB(250,250,250),
+		NotificationActionsBackground = Color3.fromRGB(240,240,240),
 	},
-	Amethyst = { Background=Color3.fromRGB(30,20,40), Topbar=Color3.fromRGB(40,25,50), Shadow=Color3.fromRGB(20,15,30), TextColor=Color3.fromRGB(240,240,240), TabBackground=Color3.fromRGB(60,40,80), TabStroke=Color3.fromRGB(70,45,90), TabBackgroundSelected=Color3.fromRGB(180,140,200), TabTextColor=Color3.fromRGB(230,230,240), SelectedTabTextColor=Color3.fromRGB(50,20,50), ElementBackground=Color3.fromRGB(45,30,60), ElementBackgroundHover=Color3.fromRGB(50,35,70), SecondaryElementBackground=Color3.fromRGB(40,30,55), ElementStroke=Color3.fromRGB(70,50,85), SecondaryElementStroke=Color3.fromRGB(65,45,80), SliderBackground=Color3.fromRGB(100,60,150), SliderProgress=Color3.fromRGB(130,80,180), SliderStroke=Color3.fromRGB(150,100,200), ToggleBackground=Color3.fromRGB(45,30,55), ToggleEnabled=Color3.fromRGB(120,60,150), ToggleDisabled=Color3.fromRGB(94,47,117), ToggleEnabledStroke=Color3.fromRGB(140,80,170), ToggleDisabledStroke=Color3.fromRGB(124,71,150), ToggleEnabledOuterStroke=Color3.fromRGB(90,40,120), ToggleDisabledOuterStroke=Color3.fromRGB(80,50,110), DropdownSelected=Color3.fromRGB(50,35,70), DropdownUnselected=Color3.fromRGB(35,25,50), InputBackground=Color3.fromRGB(45,30,60), InputStroke=Color3.fromRGB(80,50,110), PlaceholderColor=Color3.fromRGB(178,150,200), NotificationBackground=Color3.fromRGB(35,20,40), NotificationActionsBackground=Color3.fromRGB(240,240,250) },
-	Green = { Background=Color3.fromRGB(18,28,20), Topbar=Color3.fromRGB(24,40,27), Shadow=Color3.fromRGB(10,20,12), TextColor=Color3.fromRGB(235,255,235), TabBackground=Color3.fromRGB(30,55,35), TabStroke=Color3.fromRGB(45,80,50), TabBackgroundSelected=Color3.fromRGB(50,150,70), TabTextColor=Color3.fromRGB(220,255,225), SelectedTabTextColor=Color3.fromRGB(255,255,255), ElementBackground=Color3.fromRGB(25,45,29), ElementBackgroundHover=Color3.fromRGB(35,60,40), SecondaryElementBackground=Color3.fromRGB(20,38,24), ElementStroke=Color3.fromRGB(45,75,50), SecondaryElementStroke=Color3.fromRGB(35,65,40), SliderBackground=Color3.fromRGB(30,130,55), SliderProgress=Color3.fromRGB(40,200,75), SliderStroke=Color3.fromRGB(70,255,100), ToggleBackground=Color3.fromRGB(25,45,30), ToggleEnabled=Color3.fromRGB(30,190,60), ToggleDisabled=Color3.fromRGB(70,90,75), ToggleEnabledStroke=Color3.fromRGB(60,240,90), ToggleDisabledStroke=Color3.fromRGB(90,110,95), ToggleEnabledOuterStroke=Color3.fromRGB(40,130,60), ToggleDisabledOuterStroke=Color3.fromRGB(55,70,60), DropdownSelected=Color3.fromRGB(30,65,38), DropdownUnselected=Color3.fromRGB(22,42,27), InputBackground=Color3.fromRGB(25,45,29), InputStroke=Color3.fromRGB(50,85,55), PlaceholderColor=Color3.fromRGB(150,180,155), NotificationBackground=Color3.fromRGB(20,38,24), NotificationActionsBackground=Color3.fromRGB(225,245,230) },
-	Bloom = { Background=Color3.fromRGB(45,25,35), Topbar=Color3.fromRGB(60,30,45), Shadow=Color3.fromRGB(30,15,22), TextColor=Color3.fromRGB(255,240,248), TabBackground=Color3.fromRGB(75,40,55), TabStroke=Color3.fromRGB(100,50,70), TabBackgroundSelected=Color3.fromRGB(220,110,150), TabTextColor=Color3.fromRGB(255,225,238), SelectedTabTextColor=Color3.fromRGB(60,20,40), ElementBackground=Color3.fromRGB(60,35,48), ElementBackgroundHover=Color3.fromRGB(75,40,58), SecondaryElementBackground=Color3.fromRGB(50,28,40), ElementStroke=Color3.fromRGB(100,55,75), SecondaryElementStroke=Color3.fromRGB(85,45,65), SliderBackground=Color3.fromRGB(210,80,130), SliderProgress=Color3.fromRGB(245,100,155), SliderStroke=Color3.fromRGB(255,145,185), ToggleBackground=Color3.fromRGB(55,32,45), ToggleEnabled=Color3.fromRGB(235,80,135), ToggleDisabled=Color3.fromRGB(110,70,85), ToggleEnabledStroke=Color3.fromRGB(255,120,165), ToggleDisabledStroke=Color3.fromRGB(130,85,100), ToggleEnabledOuterStroke=Color3.fromRGB(190,65,105), ToggleDisabledOuterStroke=Color3.fromRGB(85,55,70), DropdownSelected=Color3.fromRGB(75,40,58), DropdownUnselected=Color3.fromRGB(50,28,40), InputBackground=Color3.fromRGB(60,35,48), InputStroke=Color3.fromRGB(100,55,75), PlaceholderColor=Color3.fromRGB(185,140,160), NotificationBackground=Color3.fromRGB(50,28,40), NotificationActionsBackground=Color3.fromRGB(245,220,230) },
-	DarkBlue = { Background=Color3.fromRGB(15,22,32), Topbar=Color3.fromRGB(22,32,45), Shadow=Color3.fromRGB(8,12,18), TextColor=Color3.fromRGB(230,240,255), TabBackground=Color3.fromRGB(28,40,55), TabStroke=Color3.fromRGB(40,55,75), TabBackgroundSelected=Color3.fromRGB(40,100,170), TabTextColor=Color3.fromRGB(205,220,240), SelectedTabTextColor=Color3.fromRGB(255,255,255), ElementBackground=Color3.fromRGB(22,32,45), ElementBackgroundHover=Color3.fromRGB(30,45,60), SecondaryElementBackground=Color3.fromRGB(18,28,40), ElementStroke=Color3.fromRGB(40,55,75), SecondaryElementStroke=Color3.fromRGB(35,48,65), SliderBackground=Color3.fromRGB(0,90,180), SliderProgress=Color3.fromRGB(0,130,230), SliderStroke=Color3.fromRGB(50,170,255), ToggleBackground=Color3.fromRGB(22,32,45), ToggleEnabled=Color3.fromRGB(0,125,220), ToggleDisabled=Color3.fromRGB(65,75,90), ToggleEnabledStroke=Color3.fromRGB(20,160,255), ToggleDisabledStroke=Color3.fromRGB(85,95,110), ToggleEnabledOuterStroke=Color3.fromRGB(20,90,170), ToggleDisabledOuterStroke=Color3.fromRGB(50,60,75), DropdownSelected=Color3.fromRGB(30,55,75), DropdownUnselected=Color3.fromRGB(20,30,42), InputBackground=Color3.fromRGB(20,30,42), InputStroke=Color3.fromRGB(45,60,80), PlaceholderColor=Color3.fromRGB(145,160,180), NotificationBackground=Color3.fromRGB(18,28,40), NotificationActionsBackground=Color3.fromRGB(220,235,250) },
-	Crimson = { Background=Color3.fromRGB(32,15,18), Topbar=Color3.fromRGB(45,20,24), Shadow=Color3.fromRGB(18,8,10), TextColor=Color3.fromRGB(255,235,235), TabBackground=Color3.fromRGB(65,25,30), TabStroke=Color3.fromRGB(90,35,42), TabBackgroundSelected=Color3.fromRGB(180,45,60), TabTextColor=Color3.fromRGB(250,215,220), SelectedTabTextColor=Color3.fromRGB(255,255,255), ElementBackground=Color3.fromRGB(50,22,27), ElementBackgroundHover=Color3.fromRGB(65,27,34), SecondaryElementBackground=Color3.fromRGB(40,18,23), ElementStroke=Color3.fromRGB(90,35,42), SecondaryElementStroke=Color3.fromRGB(75,30,36), SliderBackground=Color3.fromRGB(150,30,45), SliderProgress=Color3.fromRGB(220,45,65), SliderStroke=Color3.fromRGB(255,75,90), ToggleBackground=Color3.fromRGB(50,22,27), ToggleEnabled=Color3.fromRGB(210,35,55), ToggleDisabled=Color3.fromRGB(100,65,70), ToggleEnabledStroke=Color3.fromRGB(245,60,80), ToggleDisabledStroke=Color3.fromRGB(120,80,85), ToggleEnabledOuterStroke=Color3.fromRGB(150,30,45), ToggleDisabledOuterStroke=Color3.fromRGB(75,50,55), DropdownSelected=Color3.fromRGB(65,27,34), DropdownUnselected=Color3.fromRGB(40,18,23), InputBackground=Color3.fromRGB(50,22,27), InputStroke=Color3.fromRGB(90,35,42), PlaceholderColor=Color3.fromRGB(175,130,135), NotificationBackground=Color3.fromRGB(40,18,23), NotificationActionsBackground=Color3.fromRGB(245,220,220) },
-	Monochrome = { Background=Color3.fromRGB(12,12,12), Topbar=Color3.fromRGB(22,22,22), Shadow=Color3.fromRGB(0,0,0), TextColor=Color3.fromRGB(245,245,245), TabBackground=Color3.fromRGB(35,35,35), TabStroke=Color3.fromRGB(55,55,55), TabBackgroundSelected=Color3.fromRGB(220,220,220), TabTextColor=Color3.fromRGB(210,210,210), SelectedTabTextColor=Color3.fromRGB(20,20,20), ElementBackground=Color3.fromRGB(25,25,25), ElementBackgroundHover=Color3.fromRGB(35,35,35), SecondaryElementBackground=Color3.fromRGB(18,18,18), ElementStroke=Color3.fromRGB(55,55,55), SecondaryElementStroke=Color3.fromRGB(45,45,45), SliderBackground=Color3.fromRGB(90,90,90), SliderProgress=Color3.fromRGB(210,210,210), SliderStroke=Color3.fromRGB(240,240,240), ToggleBackground=Color3.fromRGB(30,30,30), ToggleEnabled=Color3.fromRGB(220,220,220), ToggleDisabled=Color3.fromRGB(80,80,80), ToggleEnabledStroke=Color3.fromRGB(245,245,245), ToggleDisabledStroke=Color3.fromRGB(120,120,120), ToggleEnabledOuterStroke=Color3.fromRGB(100,100,100), ToggleDisabledOuterStroke=Color3.fromRGB(60,60,60), DropdownSelected=Color3.fromRGB(40,40,40), DropdownUnselected=Color3.fromRGB(25,25,25), InputBackground=Color3.fromRGB(28,28,28), InputStroke=Color3.fromRGB(65,65,65), PlaceholderColor=Color3.fromRGB(150,150,150), NotificationBackground=Color3.fromRGB(18,18,18), NotificationActionsBackground=Color3.fromRGB(230,230,230) },
+
+	Amethyst = {
+		Background=Color3.fromRGB(30,20,40),
+		Topbar=Color3.fromRGB(40,25,50),
+		Shadow=Color3.fromRGB(20,15,30),
+		TextColor=Color3.fromRGB(240,240,240),
+		TabBackground=Color3.fromRGB(60,40,80),
+		TabStroke=Color3.fromRGB(70,45,90),
+		TabBackgroundSelected=Color3.fromRGB(180,140,200),
+		TabTextColor=Color3.fromRGB(230,230,240),
+		SelectedTabTextColor=Color3.fromRGB(50,20,50),
+		ElementBackground=Color3.fromRGB(45,30,60),
+		ElementBackgroundHover=Color3.fromRGB(50,35,70),
+		SecondaryElementBackground=Color3.fromRGB(40,30,55),
+		ElementStroke=Color3.fromRGB(70,50,85),
+		SecondaryElementStroke=Color3.fromRGB(65,45,80),
+		SliderBackground=Color3.fromRGB(100,60,150),
+		SliderProgress=Color3.fromRGB(130,80,180),
+		SliderStroke=Color3.fromRGB(150,100,200),
+		ToggleBackground=Color3.fromRGB(45,30,55),
+		ToggleEnabled=Color3.fromRGB(120,60,150),
+		ToggleDisabled=Color3.fromRGB(94,47,117),
+		ToggleEnabledStroke=Color3.fromRGB(140,80,170),
+		ToggleDisabledStroke=Color3.fromRGB(124,71,150),
+		ToggleEnabledOuterStroke=Color3.fromRGB(90,40,120),
+		ToggleDisabledOuterStroke=Color3.fromRGB(80,50,110),
+		DropdownSelected=Color3.fromRGB(50,35,70),
+		DropdownUnselected=Color3.fromRGB(35,25,50),
+		InputBackground=Color3.fromRGB(45,30,60),
+		InputStroke=Color3.fromRGB(80,50,110),
+		PlaceholderColor=Color3.fromRGB(178,150,200),
+		NotificationBackground=Color3.fromRGB(35,20,40),
+		NotificationActionsBackground=Color3.fromRGB(240,240,250)
+	},
+
+	Green = {
+		Background=Color3.fromRGB(18,28,20),
+		Topbar=Color3.fromRGB(24,40,27),
+		Shadow=Color3.fromRGB(10,20,12),
+		TextColor=Color3.fromRGB(235,255,235),
+		TabBackground=Color3.fromRGB(30,55,35),
+		TabStroke=Color3.fromRGB(45,80,50),
+		TabBackgroundSelected=Color3.fromRGB(50,150,70),
+		TabTextColor=Color3.fromRGB(220,255,225),
+		SelectedTabTextColor=Color3.fromRGB(255,255,255),
+		ElementBackground=Color3.fromRGB(25,45,29),
+		ElementBackgroundHover=Color3.fromRGB(35,60,40),
+		SecondaryElementBackground=Color3.fromRGB(20,38,24),
+		ElementStroke=Color3.fromRGB(45,75,50),
+		SecondaryElementStroke=Color3.fromRGB(35,65,40),
+		SliderBackground=Color3.fromRGB(30,130,55),
+		SliderProgress=Color3.fromRGB(40,200,75),
+		SliderStroke=Color3.fromRGB(70,255,100),
+		ToggleBackground=Color3.fromRGB(25,45,30),
+		ToggleEnabled=Color3.fromRGB(30,190,60),
+		ToggleDisabled=Color3.fromRGB(70,90,75),
+		ToggleEnabledStroke=Color3.fromRGB(60,240,90),
+		ToggleDisabledStroke=Color3.fromRGB(90,110,95),
+		ToggleEnabledOuterStroke=Color3.fromRGB(40,130,60),
+		ToggleDisabledOuterStroke=Color3.fromRGB(55,70,60),
+		DropdownSelected=Color3.fromRGB(30,65,38),
+		DropdownUnselected=Color3.fromRGB(22,42,27),
+		InputBackground=Color3.fromRGB(25,45,29),
+		InputStroke=Color3.fromRGB(50,85,55),
+		PlaceholderColor=Color3.fromRGB(150,180,155),
+		NotificationBackground=Color3.fromRGB(20,38,24),
+		NotificationActionsBackground=Color3.fromRGB(225,245,230)
+	},
+
+	Bloom = {
+		Background=Color3.fromRGB(45,25,35),
+		Topbar=Color3.fromRGB(60,30,45),
+		Shadow=Color3.fromRGB(30,15,22),
+		TextColor=Color3.fromRGB(255,240,248),
+		TabBackground=Color3.fromRGB(75,40,55),
+		TabStroke=Color3.fromRGB(100,50,70),
+		TabBackgroundSelected=Color3.fromRGB(220,110,150),
+		TabTextColor=Color3.fromRGB(255,225,238),
+		SelectedTabTextColor=Color3.fromRGB(60,20,40),
+		ElementBackground=Color3.fromRGB(60,35,48),
+		ElementBackgroundHover=Color3.fromRGB(75,40,58),
+		SecondaryElementBackground=Color3.fromRGB(50,28,40),
+		ElementStroke=Color3.fromRGB(100,55,75),
+		SecondaryElementStroke=Color3.fromRGB(85,45,65),
+		SliderBackground=Color3.fromRGB(210,80,130),
+		SliderProgress=Color3.fromRGB(245,100,155),
+		SliderStroke=Color3.fromRGB(255,145,185),
+		ToggleBackground=Color3.fromRGB(55,32,45),
+		ToggleEnabled=Color3.fromRGB(235,80,135),
+		ToggleDisabled=Color3.fromRGB(110,70,85),
+		ToggleEnabledStroke=Color3.fromRGB(255,120,165),
+		ToggleDisabledStroke=Color3.fromRGB(130,85,100),
+		ToggleEnabledOuterStroke=Color3.fromRGB(190,65,105),
+		ToggleDisabledOuterStroke=Color3.fromRGB(85,55,70),
+		DropdownSelected=Color3.fromRGB(75,40,58),
+		DropdownUnselected=Color3.fromRGB(50,28,40),
+		InputBackground=Color3.fromRGB(60,35,48),
+		InputStroke=Color3.fromRGB(100,55,75),
+		PlaceholderColor=Color3.fromRGB(185,140,160),
+		NotificationBackground=Color3.fromRGB(50,28,40),
+		NotificationActionsBackground=Color3.fromRGB(245,220,230)
+	},
+
+	DarkBlue = {
+		Background=Color3.fromRGB(15,22,32),
+		Topbar=Color3.fromRGB(22,32,45),
+		Shadow=Color3.fromRGB(8,12,18),
+		TextColor=Color3.fromRGB(230,240,255),
+		TabBackground=Color3.fromRGB(28,40,55),
+		TabStroke=Color3.fromRGB(40,55,75),
+		TabBackgroundSelected=Color3.fromRGB(40,100,170),
+		TabTextColor=Color3.fromRGB(205,220,240),
+		SelectedTabTextColor=Color3.fromRGB(255,255,255),
+		ElementBackground=Color3.fromRGB(22,32,45),
+		ElementBackgroundHover=Color3.fromRGB(30,45,60),
+		SecondaryElementBackground=Color3.fromRGB(18,28,40),
+		ElementStroke=Color3.fromRGB(40,55,75),
+		SecondaryElementStroke=Color3.fromRGB(35,48,65),
+		SliderBackground=Color3.fromRGB(0,90,180),
+		SliderProgress=Color3.fromRGB(0,130,230),
+		SliderStroke=Color3.fromRGB(50,170,255),
+		ToggleBackground=Color3.fromRGB(22,32,45),
+		ToggleEnabled=Color3.fromRGB(0,125,220),
+		ToggleDisabled=Color3.fromRGB(65,75,90),
+		ToggleEnabledStroke=Color3.fromRGB(20,160,255),
+		ToggleDisabledStroke=Color3.fromRGB(85,95,110),
+		ToggleEnabledOuterStroke=Color3.fromRGB(20,90,170),
+		ToggleDisabledOuterStroke=Color3.fromRGB(50,60,75),
+		DropdownSelected=Color3.fromRGB(30,55,75),
+		DropdownUnselected=Color3.fromRGB(20,30,42),
+		InputBackground=Color3.fromRGB(20,30,42),
+		InputStroke=Color3.fromRGB(45,60,80),
+		PlaceholderColor=Color3.fromRGB(145,160,180),
+		NotificationBackground=Color3.fromRGB(18,28,40),
+		NotificationActionsBackground=Color3.fromRGB(220,235,250)
+	},
+
+	Crimson = {
+		Background=Color3.fromRGB(32,15,18),
+		Topbar=Color3.fromRGB(45,20,24),
+		Shadow=Color3.fromRGB(18,8,10),
+		TextColor=Color3.fromRGB(255,235,235),
+		TabBackground=Color3.fromRGB(65,25,30),
+		TabStroke=Color3.fromRGB(90,35,42),
+		TabBackgroundSelected=Color3.fromRGB(180,45,60),
+		TabTextColor=Color3.fromRGB(250,215,220),
+		SelectedTabTextColor=Color3.fromRGB(255,255,255),
+		ElementBackground=Color3.fromRGB(50,22,27),
+		ElementBackgroundHover=Color3.fromRGB(65,27,34),
+		SecondaryElementBackground=Color3.fromRGB(40,18,23),
+		ElementStroke=Color3.fromRGB(90,35,42),
+		SecondaryElementStroke=Color3.fromRGB(75,30,36),
+		SliderBackground=Color3.fromRGB(150,30,45),
+		SliderProgress=Color3.fromRGB(220,45,65),
+		SliderStroke=Color3.fromRGB(255,75,90),
+		ToggleBackground=Color3.fromRGB(50,22,27),
+		ToggleEnabled=Color3.fromRGB(210,35,55),
+		ToggleDisabled=Color3.fromRGB(100,65,70),
+		ToggleEnabledStroke=Color3.fromRGB(245,60,80),
+		ToggleDisabledStroke=Color3.fromRGB(120,80,85),
+		ToggleEnabledOuterStroke=Color3.fromRGB(150,30,45),
+		ToggleDisabledOuterStroke=Color3.fromRGB(75,50,55),
+		DropdownSelected=Color3.fromRGB(65,27,34),
+		DropdownUnselected=Color3.fromRGB(40,18,23),
+		InputBackground=Color3.fromRGB(50,22,27),
+		InputStroke=Color3.fromRGB(90,35,42),
+		PlaceholderColor=Color3.fromRGB(175,130,135),
+		NotificationBackground=Color3.fromRGB(40,18,23),
+		NotificationActionsBackground=Color3.fromRGB(245,220,220)
+	},
+
+	Monochrome = {
+		Background=Color3.fromRGB(12,12,12),
+		Topbar=Color3.fromRGB(22,22,22),
+		Shadow=Color3.fromRGB(0,0,0),
+		TextColor=Color3.fromRGB(245,245,245),
+		TabBackground=Color3.fromRGB(35,35,35),
+		TabStroke=Color3.fromRGB(55,55,55),
+		TabBackgroundSelected=Color3.fromRGB(220,220,220),
+		TabTextColor=Color3.fromRGB(210,210,210),
+		SelectedTabTextColor=Color3.fromRGB(20,20,20),
+		ElementBackground=Color3.fromRGB(25,25,25),
+		ElementBackgroundHover=Color3.fromRGB(35,35,35),
+		SecondaryElementBackground=Color3.fromRGB(18,18,18),
+		ElementStroke=Color3.fromRGB(55,55,55),
+		SecondaryElementStroke=Color3.fromRGB(45,45,45),
+		SliderBackground=Color3.fromRGB(90,90,90),
+		SliderProgress=Color3.fromRGB(210,210,210),
+		SliderStroke=Color3.fromRGB(240,240,240),
+		ToggleBackground=Color3.fromRGB(30,30,30),
+		ToggleEnabled=Color3.fromRGB(220,220,220),
+		ToggleDisabled=Color3.fromRGB(80,80,80),
+		ToggleEnabledStroke=Color3.fromRGB(245,245,245),
+		ToggleDisabledStroke=Color3.fromRGB(120,120,120),
+		ToggleEnabledOuterStroke=Color3.fromRGB(100,100,100),
+		ToggleDisabledOuterStroke=Color3.fromRGB(60,60,60),
+		DropdownSelected=Color3.fromRGB(40,40,40),
+		DropdownUnselected=Color3.fromRGB(25,25,25),
+		InputBackground=Color3.fromRGB(28,28,28),
+		InputStroke=Color3.fromRGB(65,65,65),
+		PlaceholderColor=Color3.fromRGB(150,150,150),
+		NotificationBackground=Color3.fromRGB(18,18,18),
+		NotificationActionsBackground=Color3.fromRGB(230,230,230)
+	},
 }
 
+--// ACTIVE THEME -----------------------------------------------------------
+
 local Theme = {
-	Background=Colors.EerieBlack, Panel=Colors.RaisinBlack, PanelBorder=Colors.DarkGray, SidebarItem=Colors.CharlestonGreen, SidebarHover=Colors.DarkSlateGray,
-	Accent=Colors.Accent, AccentDim=Colors.DarkGreen, Text=Colors.Gainsboro, SubText=Colors.SpanishGray, SliderTrack=Colors.Charcoal, SliderFill=Colors.DavyGray,
-	Font=Customization.Fonts.Main, FontBold=Customization.Fonts.Bold,
+	Background = Colors.EerieBlack,
+	Panel = Colors.RaisinBlack,
+	PanelBorder = Colors.DarkGray,
+	SidebarItem = Colors.CharlestonGreen,
+	SidebarHover = Colors.DarkSlateGray,
+	Accent = Colors.Accent,
+	AccentDim = Colors.DarkGreen,
+	Text = Colors.Gainsboro,
+	SubText = Colors.SpanishGray,
+	SliderTrack = Colors.Charcoal,
+	SliderFill = Colors.DavyGray,
+	Font = Customization.Fonts.Main,
+	FontBold = Customization.Fonts.Bold,
 }
 
 local function applyTheme(theme)
@@ -237,21 +603,26 @@ local function applyTheme(theme)
 	Theme.SliderFill = theme.SliderProgress or Theme.SliderFill
 end
 
---// HELPERS ---------------------------------------------------------------
+--// HELPERS ----------------------------------------------------------------
 
 local function create(class, props, children)
 	local inst = Instance.new(class)
+
 	for prop, value in pairs(props or {}) do
 		inst[prop] = value
 	end
+
 	for _, child in ipairs(children or {}) do
 		child.Parent = inst
 	end
+
 	return inst
 end
 
 local function corner(radius)
-	return create("UICorner", { CornerRadius = UDim.new(0, radius or 8) })
+	return create("UICorner", {
+		CornerRadius = UDim.new(0, radius or 8)
+	})
 end
 
 local function stroke(color, thickness)
@@ -262,7 +633,14 @@ local function stroke(color, thickness)
 end
 
 local function tween(obj, props, time, style)
-	TweenService:Create(obj, TweenInfo.new(time or 0.2, style or Enum.EasingStyle.Quad), props):Play()
+	TweenService:Create(
+		obj,
+		TweenInfo.new(
+			time or 0.2,
+			style or Enum.EasingStyle.Quad
+		),
+		props
+	):Play()
 end
 
 local function resolveIcon(icon)
@@ -291,6 +669,7 @@ end
 
 local function createIcon(parent, icon, size, color, position, zIndex)
 	local image = resolveIcon(icon)
+
 	if not image then
 		return nil
 	end
@@ -300,7 +679,10 @@ local function createIcon(parent, icon, size, color, position, zIndex)
 		Image = image,
 		ImageColor3 = color or Theme.Text,
 		BackgroundTransparency = 1,
-		Size = UDim2.fromOffset(size or Customization.Size.Icon, size or Customization.Size.Icon),
+		Size = UDim2.fromOffset(
+			size or Customization.Size.Icon,
+			size or Customization.Size.Icon
+		),
 		Position = position or UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		ScaleType = Enum.ScaleType.Fit,
@@ -309,45 +691,45 @@ local function createIcon(parent, icon, size, color, position, zIndex)
 	})
 end
 
---// LIBRARY ---------------------------------------------------------------
+--// LIBRARY ----------------------------------------------------------------
 
 local Lib = {}
 Lib.__index = Lib
 
--- Named accent color presets, usable with Window:SetAccentColor(Lib.Presets.Blue)
--- or by name: Window:SetAccentColor("Blue")
 Lib.Themes = Themes
 
 Lib.Presets = {
-	Green  = Color3.fromRGB(0, 255, 0),
-	Blue   = Color3.fromRGB(70, 145, 235),
+	Green = Color3.fromRGB(0, 255, 0),
+	Blue = Color3.fromRGB(70, 145, 235),
 	Purple = Color3.fromRGB(165, 95, 235),
-	Red    = Color3.fromRGB(230, 75, 75),
+	Red = Color3.fromRGB(230, 75, 75),
 }
 
--- Public color table. You can change these before creating the window:
 Lib.Colors = Colors
 Lib.Icons = LucideIcons
 Lib.Customization = Customization
 Lib.Transparency = Customization.Transparency
 Lib.Style = Customization.Size
 
+--// CREATE WINDOW ----------------------------------------------------------
+
 function Lib:CreateWindow(config)
 	config = config or {}
 
-	-- Unload an existing copy of this UI before creating a new one.
-	-- Change GuiName in the config if you want multiple different UIs.
 	local guiName = config.GuiName or "Lib"
 	local existingGui = PlayerGui:FindFirstChild(guiName)
+
 	if existingGui and Customization.Behavior.DestroyOldUI then
 		existingGui:Destroy()
 	end
 
 	if config.Theme then
 		local selectedTheme = config.Theme
+
 		if type(selectedTheme) == "string" then
 			selectedTheme = Themes[selectedTheme]
 		end
+
 		if selectedTheme then
 			applyTheme(selectedTheme)
 		else
@@ -359,12 +741,10 @@ function Lib:CreateWindow(config)
 		Theme.Accent = config.AccentColor
 	end
 
-	-- Optional per-window transparency override. Pass a number to apply it
-	-- to the main visible surfaces, or a table for individual values.
-	-- Roblox transparency: 0 = opaque, 1 = fully transparent.
 	if config.Transparency ~= nil then
 		if type(config.Transparency) == "number" then
 			local value = math.clamp(config.Transparency, 0, 1)
+
 			Customization.Transparency.Main = value
 			Customization.Transparency.Panel = value
 			Customization.Transparency.Footer = value
@@ -376,10 +756,14 @@ function Lib:CreateWindow(config)
 			Customization.Transparency.Checkbox = value
 			Customization.Transparency.Graph = value
 			Customization.Transparency.Border = value
+
 		elseif type(config.Transparency) == "table" then
 			for key, value in pairs(config.Transparency) do
-				if Customization.Transparency[key] ~= nil and type(value) == "number" then
-					Customization.Transparency[key] = math.clamp(value, 0, 1)
+				if Customization.Transparency[key] ~= nil
+					and type(value) == "number" then
+
+					Customization.Transparency[key] =
+						math.clamp(value, 0, 1)
 				end
 			end
 		end
@@ -395,7 +779,23 @@ function Lib:CreateWindow(config)
 		Parent = PlayerGui,
 	})
 
+	--// DROPDOWN OVERLAY ----------------------------------------------------
+	-- Dropdown menus are intentionally placed directly under ScreenGui.
+	-- This prevents ScrollingFrames and sibling panels from drawing over
+	-- an opened dropdown.
+
+	local DropdownLayer = create("Frame", {
+		Name = "DropdownLayer",
+		Size = UDim2.fromScale(1, 1),
+		Position = UDim2.fromScale(0, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ZIndex = 1000,
+		Parent = ScreenGui,
+	})
+
 	local MainStroke = stroke(Theme.Accent, 1)
+
 	local MainFrame = create("Frame", {
 		Name = "Main",
 		Size = windowSize,
@@ -404,9 +804,13 @@ function Lib:CreateWindow(config)
 		BackgroundColor3 = Theme.Background,
 		BackgroundTransparency = Customization.Transparency.Main,
 		Parent = ScreenGui,
-	}, { corner(Customization.Corners.Main), MainStroke })
+	}, {
+		corner(Customization.Corners.Main),
+		MainStroke
+	})
 
-	-- Sidebar ---------------------------------------------------------
+	--// SIDEBAR ------------------------------------------------------------
+
 	local Sidebar = create("Frame", {
 		Name = "Sidebar",
 		Size = UDim2.new(0, sidebarWidth, 1, 0),
@@ -451,9 +855,12 @@ function Lib:CreateWindow(config)
 		Position = UDim2.fromOffset(12, 58),
 		BackgroundTransparency = 1,
 		Parent = Sidebar,
-	}, { TabList })
+	}, {
+		TabList
+	})
 
-	-- Footer / profile --------------------------------------------------
+	--// FOOTER / PROFILE ---------------------------------------------------
+
 	local Footer = create("Frame", {
 		Size = UDim2.new(1, -24, 0, 76),
 		Position = UDim2.new(0, 12, 1, -86),
@@ -466,7 +873,9 @@ function Lib:CreateWindow(config)
 		BackgroundColor3 = Theme.SidebarItem,
 		BackgroundTransparency = Customization.Transparency.Footer,
 		Parent = Footer,
-	}, { corner(8) })
+	}, {
+		corner(8)
+	})
 
 	local ProfileRow = create("Frame", {
 		Size = UDim2.new(1, 0, 0, 34),
@@ -475,10 +884,6 @@ function Lib:CreateWindow(config)
 		Parent = Footer,
 	})
 
-	-- Avatar: try to load the local player's real thumbnail; fall back to
-	-- an initial-letter badge if the thumbnail request fails (e.g. no
-	-- internet access in some Studio/test contexts). No rounding/clipping —
-	-- shows the thumbnail as-is, square, with no colored backing box.
 	local AvatarFrame = create("Frame", {
 		Size = UDim2.fromOffset(28, 28),
 		BackgroundTransparency = 1,
@@ -542,9 +947,466 @@ function Lib:CreateWindow(config)
 		Position = UDim2.fromOffset(36, 27),
 		Size = UDim2.new(1, -42, 0, 22),
 		Parent = ProfileRow,
-	}, { corner(6) })
+	}, {
+		corner(6)
+	})
+
+	--// CONTENT ------------------------------------------------------------
+
+	local ContentArea = create("Frame", {
+		Name = "Content",
+		Size = UDim2.new(1, -sidebarWidth, 1, 0),
+		Position = UDim2.fromOffset(sidebarWidth, 0),
+		BackgroundTransparency = 1,
+		Parent = MainFrame,
+	})
+
+	local Window = setmetatable({
+		ScreenGui = ScreenGui,
+		MainFrame = MainFrame,
+		TabContainer = TabContainer,
+		ContentArea = ContentArea,
+		DropdownLayer = DropdownLayer,
+		Tabs = {},
+		ActiveTab = nil,
+		_accentListeners = {},
+	}, Lib)
+
+	table.insert(Window._accentListeners, function(color)
+		tween(MainStroke, {
+			Color = color
+		}, 0.2)
+	end)
+
+	if FallbackBadge then
+		table.insert(Window._accentListeners, function(color)
+			tween(FallbackBadge, {
+				BackgroundColor3 = color
+			}, 0.2)
+		end)
+	end
+
+	--// DRAG / RESIZE ------------------------------------------------------
+
+	if Customization.Drag.Enabled then
+		local dragging = false
+		local dragStart = nil
+		local startPos = nil
+		local resizing = false
+		local resizeStart = nil
+		local startSize = nil
+
+		local DragLayer = create("Frame", {
+			Name = "DragLayer",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Active = false,
+			ZIndex = 50,
+			Parent = MainFrame,
+		})
+
+		local function beginDrag(input)
+			if dragging or resizing then
+				return
+			end
+
+			dragging = true
+			dragStart = input.Position
+			startPos = MainFrame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+
+		local dragZones = {}
+
+		local function makeDragZone(name, size, position)
+			local zone = create("TextButton", {
+				Name = name,
+				Text = "",
+				AutoButtonColor = false,
+				Size = size,
+				Position = position,
+				BackgroundTransparency = 1,
+				Active = true,
+				ZIndex = 51,
+				Parent = DragLayer,
+			})
+
+			zone.InputBegan:Connect(function(input)
+				if (
+					Customization.Drag.Mouse
+					and input.UserInputType == Enum.UserInputType.MouseButton1
+				)
+				or (
+					Customization.Drag.Touch
+					and input.UserInputType == Enum.UserInputType.Touch
+				) then
+					beginDrag(input)
+				end
+			end)
+
+			table.insert(dragZones, zone)
+
+			return zone
+		end
+
+		makeDragZone(
+			"TopDrag",
+			UDim2.new(1, -24, 0, 24),
+			UDim2.fromOffset(12, 0)
+		)
+
+		makeDragZone(
+			"LeftDrag",
+			UDim2.new(0, 12, 1, -24),
+			UDim2.fromOffset(0, 12)
+		)
+
+		makeDragZone(
+			"RightDrag",
+			UDim2.new(0, 12, 1, -24),
+			UDim2.new(1, -12, 0, 12)
+		)
+
+		makeDragZone(
+			"BottomDrag",
+			UDim2.new(1, -80, 0, 12),
+			UDim2.new(0, 12, 1, -12)
+		)
+
+		local ResizeHandle = create("TextButton", {
+			Name = "ResizeHandle",
+			Text = "",
+			AutoButtonColor = false,
+			Size = UDim2.fromOffset(22, 22),
+			Position = UDim2.new(1, -22, 1, -22),
+			BackgroundTransparency = 0.55,
+			BackgroundColor3 = Theme.Accent,
+			Active = true,
+			ZIndex = 55,
+			Parent = MainFrame,
+		}, {
+			corner(5)
+		})
+
+		ResizeHandle.InputBegan:Connect(function(input)
+			if (
+				Customization.Drag.Mouse
+				and input.UserInputType == Enum.UserInputType.MouseButton1
+			)
+			or (
+				Customization.Drag.Touch
+				and input.UserInputType == Enum.UserInputType.Touch
+			) then
+				resizing = true
+				resizeStart = input.Position
+				startSize = MainFrame.AbsoluteSize
+
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						resizing = false
+					end
+				end)
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement
+				and not (
+					Customization.Drag.Touch
+					and input.UserInputType == Enum.UserInputType.Touch
+				) then
+				return
+			end
+
+			if resizing then
+				local delta = input.Position - resizeStart
+
+				local minX, minY = 560, 420
+
+				local newX = math.max(
+					minX,
+					startSize.X + delta.X
+				)
+
+				local newY = math.max(
+					minY,
+					startSize.Y + delta.Y
+				)
+
+				MainFrame.Size = UDim2.fromOffset(
+					newX,
+					newY
+				)
+
+			elseif dragging then
+				local delta = input.Position - dragStart
+
+				MainFrame.Position = UDim2.new(
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
+				)
+			end
+		end)
+	end
+    --// LIBRARY ---------------------------------------------------------------
+
+local Lib = {}
+Lib.__index = Lib
+
+-- Named accent color presets, usable with Window:SetAccentColor(Lib.Presets.Blue)
+-- or by name: Window:SetAccentColor("Blue")
+Lib.Themes = Themes
+
+Lib.Presets = {
+	Green = Color3.fromRGB(0, 255, 0),
+	Blue = Color3.fromRGB(70, 145, 235),
+	Purple = Color3.fromRGB(165, 95, 235),
+	Red = Color3.fromRGB(230, 75, 75),
+}
+
+-- Public color table. You can change these before creating the window:
+Lib.Colors = Colors
+Lib.Icons = LucideIcons
+Lib.Customization = Customization
+Lib.Transparency = Customization.Transparency
+Lib.Style = Customization.Size
+
+function Lib:CreateWindow(config)
+	config = config or {}
+
+	-- Unload an existing copy of this UI before creating a new one.
+	-- Change GuiName in the config if you want multiple different UIs.
+	local guiName = config.GuiName or "Lib"
+	local existingGui = PlayerGui:FindFirstChild(guiName)
+
+	if existingGui and Customization.Behavior.DestroyOldUI then
+		existingGui:Destroy()
+	end
+
+	if config.Theme then
+		local selectedTheme = config.Theme
+
+		if type(selectedTheme) == "string" then
+			selectedTheme = Themes[selectedTheme]
+		end
+
+		if selectedTheme then
+			applyTheme(selectedTheme)
+		else
+			warn("Lib: unknown theme. Use Lib.Themes to see available themes.")
+		end
+	end
+
+	if config.AccentColor then
+		Theme.Accent = config.AccentColor
+	end
+
+	-- Optional per-window transparency override.
+	-- Pass a number to apply it to the main visible surfaces,
+	-- or a table for individual values.
+	-- Roblox transparency: 0 = opaque, 1 = fully transparent.
+	if config.Transparency ~= nil then
+		if type(config.Transparency) == "number" then
+			local value = math.clamp(config.Transparency, 0, 1)
+
+			Customization.Transparency.Main = value
+			Customization.Transparency.Panel = value
+			Customization.Transparency.Footer = value
+			Customization.Transparency.Tab = value
+			Customization.Transparency.Button = value
+			Customization.Transparency.Input = value
+			Customization.Transparency.Slider = value
+			Customization.Transparency.SliderFill = value
+			Customization.Transparency.Checkbox = value
+			Customization.Transparency.Graph = value
+			Customization.Transparency.Border = value
+		elseif type(config.Transparency) == "table" then
+			for key, value in pairs(config.Transparency) do
+				if Customization.Transparency[key] ~= nil and type(value) == "number" then
+					Customization.Transparency[key] = math.clamp(value, 0, 1)
+				end
+			end
+		end
+	end
+
+	local windowSize = config.Size or Customization.Size.Window
+	local sidebarWidth = config.SidebarWidth or Customization.Size.SidebarWidth
+
+	local ScreenGui = create("ScreenGui", {
+		Name = guiName,
+		ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = PlayerGui,
+	})
+
+	local MainStroke = stroke(Theme.Accent, 1)
+
+	local MainFrame = create("Frame", {
+		Name = "Main",
+		Size = windowSize,
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		BackgroundColor3 = Theme.Background,
+		BackgroundTransparency = Customization.Transparency.Main,
+		Parent = ScreenGui,
+	}, {
+		corner(Customization.Corners.Main),
+		MainStroke
+	})
+
+	-- Sidebar ---------------------------------------------------------
+
+	local Sidebar = create("Frame", {
+		Name = "Sidebar",
+		Size = UDim2.new(0, sidebarWidth, 1, 0),
+		BackgroundTransparency = 1,
+		Parent = MainFrame,
+	})
+
+	create("Frame", {
+		Name = "Divider",
+		Size = UDim2.new(0, 1, 1, 0),
+		Position = UDim2.new(1, 0, 0, 0),
+		BackgroundColor3 = Theme.PanelBorder,
+		BorderSizePixel = 0,
+		Parent = Sidebar,
+	})
+
+	local Header = create("Frame", {
+		Size = UDim2.new(1, 0, 0, Customization.Size.HeaderHeight),
+		BackgroundTransparency = 1,
+		Parent = Sidebar,
+	})
+
+	create("TextLabel", {
+		Text = " " .. (config.Title or "Kelo"),
+		Font = Theme.FontBold,
+		TextSize = 18,
+		TextColor3 = Theme.Text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, -20, 1, 0),
+		Position = UDim2.fromOffset(20, 0),
+		Parent = Header,
+	})
+
+	local TabList = create("UIListLayout", {
+		Padding = UDim.new(0, 6),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+	})
+
+	local TabContainer = create("Frame", {
+		Size = UDim2.new(1, -24, 1, -140),
+		Position = UDim2.fromOffset(12, 58),
+		BackgroundTransparency = 1,
+		Parent = Sidebar,
+	}, {
+		TabList
+	})
+
+	-- Footer / profile --------------------------------------------------
+
+	local Footer = create("Frame", {
+		Size = UDim2.new(1, -24, 0, 76),
+		Position = UDim2.new(0, 12, 1, -86),
+		BackgroundTransparency = 1,
+		Parent = Sidebar,
+	})
+
+	create("Frame", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundColor3 = Theme.SidebarItem,
+		BackgroundTransparency = Customization.Transparency.Footer,
+		Parent = Footer,
+	}, {
+		corner(8)
+	})
+
+	local ProfileRow = create("Frame", {
+		Size = UDim2.new(1, 0, 0, 34),
+		Position = UDim2.fromOffset(0, 40),
+		BackgroundTransparency = 1,
+		Parent = Footer,
+	})
+
+	-- Avatar: try to load the local player's real thumbnail; fall back to
+	-- an initial-letter badge if the thumbnail request fails.
+	local AvatarFrame = create("Frame", {
+		Size = UDim2.fromOffset(28, 28),
+		BackgroundTransparency = 1,
+		Parent = ProfileRow,
+	})
+
+	local displayName = config.ProfileName or LocalPlayer.Name or "NAME"
+
+	local ok, thumbnailContent = pcall(function()
+		return Players:GetUserThumbnailAsync(
+			LocalPlayer.UserId,
+			Enum.ThumbnailType.HeadShot,
+			Enum.ThumbnailSize.Size100x100
+		)
+	end)
+
+	local FallbackBadge = nil
+
+	if ok and thumbnailContent then
+		create("ImageLabel", {
+			Image = thumbnailContent,
+			ScaleType = Enum.ScaleType.Crop,
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			Parent = AvatarFrame,
+		})
+	else
+		FallbackBadge = create("TextLabel", {
+			Text = string.sub(displayName, 1, 1):upper(),
+			Font = Theme.FontBold,
+			TextSize = 14,
+			TextColor3 = Color3.fromRGB(10, 10, 10),
+			BackgroundColor3 = Colors.Avatar,
+			BackgroundTransparency = 0,
+			Size = UDim2.fromScale(1, 1),
+			Parent = AvatarFrame,
+		})
+	end
+
+	local ProfileNameLabel = create("TextLabel", {
+		Text = displayName,
+		Font = Theme.FontBold,
+		TextSize = 14,
+		TextColor3 = Theme.Text,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		BackgroundTransparency = 1,
+		Position = UDim2.fromOffset(36, 0),
+		Size = UDim2.new(1, -42, 0, 28),
+		Parent = ProfileRow,
+	})
+
+	local ProfileTagLabel = create("TextLabel", {
+		Text = config.ProfileTag or "",
+		Font = Theme.Font,
+		TextSize = 11,
+		TextColor3 = Theme.SubText,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		BackgroundColor3 = Theme.SidebarItem,
+		Position = UDim2.fromOffset(36, 27),
+		Size = UDim2.new(1, -42, 0, 22),
+		Parent = ProfileRow,
+	}, {
+		corner(6)
+	})
 
 	-- Content area ------------------------------------------------------
+
 	local ContentArea = create("Frame", {
 		Name = "Content",
 		Size = UDim2.new(1, -sidebarWidth, 1, 0),
@@ -565,23 +1427,29 @@ function Lib:CreateWindow(config)
 
 	-- The main window border tracks the accent color
 	table.insert(Window._accentListeners, function(color)
-		tween(MainStroke, { Color = color }, 0.2)
+		tween(MainStroke, {
+			Color = color
+		}, 0.2)
 	end)
 
-	-- The avatar badge background tracks the accent color (only visible
-	-- when the real thumbnail failed to load)
+	-- The avatar badge background tracks the accent color
+	-- (only visible when the real thumbnail failed to load)
 	if FallbackBadge then
 		table.insert(Window._accentListeners, function(color)
-			tween(FallbackBadge, { BackgroundColor3 = color }, 0.2)
+			tween(FallbackBadge, {
+				BackgroundColor3 = color
+			}, 0.2)
 		end)
 	end
 
 	-- Drag the whole window from the header or any outer side/corner.
 	-- A bottom-right resize handle is also provided.
+
 	if Customization.Drag.Enabled then
 		local dragging = false
 		local dragStart = nil
 		local startPos = nil
+
 		local resizing = false
 		local resizeStart = nil
 		local startSize = nil
@@ -596,69 +1464,146 @@ function Lib:CreateWindow(config)
 		})
 
 		local function beginDrag(input)
-			if dragging or resizing then return end
+			if dragging or resizing then
+				return
+			end
+
 			dragging = true
 			dragStart = input.Position
 			startPos = MainFrame.Position
+
 			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then dragging = false end
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
 			end)
 		end
 
 		local dragZones = {}
+
 		local function makeDragZone(name, size, position)
 			local zone = create("TextButton", {
-				Name = name, Text = "", AutoButtonColor = false,
-				Size = size, Position = position, BackgroundTransparency = 1,
-				Active = true, ZIndex = 51, Parent = DragLayer,
+				Name = name,
+				Text = "",
+				AutoButtonColor = false,
+				Size = size,
+				Position = position,
+				BackgroundTransparency = 1,
+				Active = true,
+				ZIndex = 51,
+				Parent = DragLayer,
 			})
+
 			zone.InputBegan:Connect(function(input)
-				if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
-					or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
+				if
+					(Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
+					or
+					(Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch)
+				then
 					beginDrag(input)
 				end
 			end)
+
 			table.insert(dragZones, zone)
+
 			return zone
 		end
 
 		-- Header and all four sides can start a move.
-		makeDragZone("TopDrag", UDim2.new(1, -24, 0, 24), UDim2.fromOffset(12, 0))
-		makeDragZone("LeftDrag", UDim2.new(0, 12, 1, -24), UDim2.fromOffset(0, 12))
-		makeDragZone("RightDrag", UDim2.new(0, 12, 1, -24), UDim2.new(1, -12, 0, 12))
-		makeDragZone("BottomDrag", UDim2.new(1, -80, 0, 12), UDim2.new(0, 12, 1, -12))
+		makeDragZone(
+			"TopDrag",
+			UDim2.new(1, -24, 0, 24),
+			UDim2.fromOffset(12, 0)
+		)
+
+		makeDragZone(
+			"LeftDrag",
+			UDim2.new(0, 12, 1, -24),
+			UDim2.fromOffset(0, 12)
+		)
+
+		makeDragZone(
+			"RightDrag",
+			UDim2.new(0, 12, 1, -24),
+			UDim2.new(1, -12, 0, 12)
+		)
+
+		makeDragZone(
+			"BottomDrag",
+			UDim2.new(1, -80, 0, 12),
+			UDim2.new(0, 12, 1, -12)
+		)
 
 		local ResizeHandle = create("TextButton", {
-			Name = "ResizeHandle", Text = "", AutoButtonColor = false,
-			Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -22, 1, -22),
-			BackgroundTransparency = 0.55, BackgroundColor3 = Theme.Accent,
-			Active = true, ZIndex = 55, Parent = MainFrame,
-		}, { corner(5) })
+			Name = "ResizeHandle",
+			Text = "",
+			AutoButtonColor = false,
+			Size = UDim2.fromOffset(22, 22),
+			Position = UDim2.new(1, -22, 1, -22),
+			BackgroundTransparency = 0.55,
+			BackgroundColor3 = Theme.Accent,
+			Active = true,
+			ZIndex = 55,
+			Parent = MainFrame,
+		}, {
+			corner(5)
+		})
 
 		ResizeHandle.InputBegan:Connect(function(input)
-			if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
-				or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
+			if
+				(Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
+				or
+				(Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch)
+			then
 				resizing = true
 				resizeStart = input.Position
 				startSize = MainFrame.AbsoluteSize
+
 				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then resizing = false end
+					if input.UserInputState == Enum.UserInputState.End then
+						resizing = false
+					end
 				end)
 			end
 		end)
 
 		UserInputService.InputChanged:Connect(function(input)
-			if input.UserInputType ~= Enum.UserInputType.MouseMovement
-				and not (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then return end
+			if
+				input.UserInputType ~= Enum.UserInputType.MouseMovement
+				and not (
+					Customization.Drag.Touch
+					and input.UserInputType == Enum.UserInputType.Touch
+				)
+			then
+				return
+			end
+
 			if resizing then
 				local delta = input.Position - resizeStart
+
 				local minX, minY = 560, 420
-				local newX = math.max(minX, startSize.X + delta.X)
-				local newY = math.max(minY, startSize.Y + delta.Y)
+
+				local newX = math.max(
+					minX,
+					startSize.X + delta.X
+				)
+
+				local newY = math.max(
+					minY,
+					startSize.Y + delta.Y
+				)
+
 				MainFrame.Size = UDim2.fromOffset(newX, newY)
+
 			elseif dragging then
 				local delta = input.Position - dragStart
-				MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+
+				MainFrame.Position = UDim2.new(
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
+				)
 			end
 		end)
 	end
@@ -667,15 +1612,23 @@ function Lib:CreateWindow(config)
 	-- The theme affects newly-created elements and the main window immediately.
 	function Window:SetTheme(themeName)
 		local selectedTheme = Themes[themeName]
+
 		if not selectedTheme then
-			warn("Lib: unknown theme '" .. tostring(themeName) .. "'. Use Lib.Themes to see available themes.")
+			warn(
+				"Lib: unknown theme '"
+					.. tostring(themeName)
+					.. "'. Use Lib.Themes to see available themes."
+			)
 			return
 		end
 
 		applyTheme(selectedTheme)
+
 		self.ThemeName = themeName
+
 		MainFrame.BackgroundColor3 = Theme.Background
 		MainStroke.Color = Theme.Accent
+
 		for _, listener in ipairs(self._accentListeners) do
 			listener(Theme.Accent)
 		end
@@ -684,19 +1637,27 @@ function Lib:CreateWindow(config)
 	-- Change this window's accent color live.
 	function Window:SetAccentColor(colorOrPresetName)
 		local color = colorOrPresetName
+
 		if type(colorOrPresetName) == "string" then
 			color = Lib.Presets[colorOrPresetName]
+
 			if not color then
-				warn("Lib: unknown accent preset '" .. tostring(colorOrPresetName) .. "'")
+				warn(
+					"Lib: unknown accent preset '"
+						.. tostring(colorOrPresetName)
+						.. "'"
+				)
 				return
 			end
 		end
+
 		if typeof(color) ~= "Color3" then
 			warn("Lib: SetAccentColor expects a Color3 or preset name.")
 			return
 		end
 
 		Theme.Accent = color
+
 		for _, listener in ipairs(self._accentListeners) do
 			listener(color)
 		end
@@ -710,22 +1671,32 @@ function Lib:CreateWindow(config)
 	end
 
 	Lib._lastWindow = Window
+
 	return Window
 end
 
--- Change the accent color live. Accepts either a Color3 or the name of a
--- Lib.Presets entry (e.g. "Blue"). Updates every element that has
--- registered itself as accent-aware (window border, active toggles, etc.)
--- and affects any new elements created afterward.
+-- Change the accent color live.
+-- Accepts either a Color3 or the name of a Lib.Presets entry
+-- (e.g. "Blue"). Updates every element that has registered itself
+-- as accent-aware (window border, active toggles, etc.) and affects
+-- any new elements created afterward.
+
 function Lib:SetAccentColor(colorOrPresetName)
 	local color = colorOrPresetName
+
 	if type(colorOrPresetName) == "string" then
 		color = Lib.Presets[colorOrPresetName]
+
 		if not color then
-			warn("Lib: unknown accent preset '" .. tostring(colorOrPresetName) .. "'")
+			warn(
+				"Lib: unknown accent preset '"
+					.. tostring(colorOrPresetName)
+					.. "'"
+			)
 			return
 		end
 	end
+
 	if typeof(color) ~= "Color3" then
 		warn("Lib: SetAccentColor expects a Color3 or preset name.")
 		return
@@ -739,783 +1710,1139 @@ function Lib:SetAccentColor(colorOrPresetName)
 		Lib._lastWindow:SetAccentColor(color)
 	end
 end
-
---// TABS -------------------------------------------------------------------
+--// TAB CREATION -----------------------------------------------------------
 
 function Lib:AddTab(config)
 	config = config or {}
-	local WindowRef = self -- keep a reference before nested methods shadow `self`
 
-	local Button = create("Frame", {
-		Size = UDim2.new(1, 0, 0, Customization.Size.TabHeight),
+	local Window = self._lastWindow
+
+	if not Window then
+		error("Lib:AddTab must be called after Lib:CreateWindow()")
+	end
+
+	local tabName = config.Name or config.Title or "Tab"
+	local tabIcon = config.Icon or DefaultTabIcons[tabName] or "layout-dashboard"
+
+	local TabButton = create("TextButton", {
+		Name = tabName,
+		Text = "",
+		AutoButtonColor = false,
 		BackgroundColor3 = Theme.SidebarItem,
 		BackgroundTransparency = Customization.Transparency.Tab,
-		LayoutOrder = #self.Tabs + 1,
-		Parent = self.TabContainer,
-	}, { corner(8) })
-
-	local IconHolder = create("Frame", {
-		Size = UDim2.fromOffset(Customization.Size.IconBox, Customization.Size.IconBox),
-		Position = UDim2.fromOffset(9, 7),
-		BackgroundColor3 = Theme.SidebarHover,
-		BackgroundTransparency = Customization.Transparency.Tab,
-		Parent = Button,
-	}, { corner(6) })
-
-	local tabName = tostring(config.Name or "Tab")
-	local iconName = config.Icon
-	if not iconName then
-		iconName = DefaultTabIcons[string.lower(tabName)]
-	end
-	createIcon(IconHolder, iconName, Customization.Size.Icon, Theme.Text, nil, 2)
-
-	create("TextLabel", {
-		Text = config.Name or "Tab",
-		Font = Theme.FontBold,
-		TextSize = 14,
-		TextColor3 = Theme.Text,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(44, 5),
-		Size = UDim2.new(1, -50, 0, 18),
-		Parent = Button,
+		Size = UDim2.new(1, 0, 0, 38),
+		LayoutOrder = #Window.Tabs + 1,
+		Parent = Window.TabContainer,
+	}, {
+		corner(Customization.Corners.Tab)
 	})
 
-	create("TextLabel", {
-		Text = config.Subtitle or "",
+	local TabIcon = createIcon(
+		tabIcon,
+		18,
+		Theme.SubText,
+		TabButton
+	)
+
+	TabIcon.Position = UDim2.fromOffset(12, 10)
+
+	local TabLabel = create("TextLabel", {
+		Text = tabName,
 		Font = Theme.Font,
-		TextSize = 11,
+		TextSize = Customization.TextSizes.Tab,
 		TextColor3 = Theme.SubText,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(44, 22),
-		Size = UDim2.new(1, -50, 0, 14),
-		Parent = Button,
-	})
-
-	local PageLayout = create("UIListLayout", {
-		Padding = UDim.new(0, 16),
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		FillDirection = Enum.FillDirection.Horizontal,
-		Wraps = true,
+		Position = UDim2.fromOffset(40, 0),
+		Size = UDim2.new(1, -48, 1, 0),
+		Parent = TabButton,
 	})
 
 	local Page = create("ScrollingFrame", {
-		Size = UDim2.new(1, -32, 1, -32),
-		Position = UDim2.fromOffset(16, 16),
+		Name = tabName .. "Page",
+		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		ScrollBarThickness = 4,
+		ScrollBarImageColor3 = Theme.Accent,
 		CanvasSize = UDim2.new(0, 0, 0, 0),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		Visible = false,
-		Parent = self.ContentArea,
-	}, { PageLayout })
+		Parent = Window.ContentArea,
+	})
 
-	local clickable = create("TextButton", {
-		Size = UDim2.fromScale(1, 1),
-		BackgroundTransparency = 1,
-		Text = "",
-		Parent = Button,
+	local PagePadding = create("UIPadding", {
+		PaddingTop = UDim.new(0, 18),
+		PaddingBottom = UDim.new(0, 18),
+		PaddingLeft = UDim.new(0, 18),
+		PaddingRight = UDim.new(0, 18),
+		Parent = Page,
+	})
+
+	local PageLayout = create("UIListLayout", {
+		Padding = UDim.new(0, Customization.Size.PanelGap),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		HorizontalAlignment = Enum.HorizontalAlignment.Left,
+		Parent = Page,
 	})
 
 	local Tab = {
-		Button = Button,
+		Name = tabName,
+		Button = TabButton,
 		Page = Page,
+		Icon = TabIcon,
+		Label = TabLabel,
 		Panels = {},
+		Window = Window,
 	}
 
-	function Tab:AddPanel(titleOrConfig)
-		-- Accepts a plain string (title, with the usual checkbox header) or
-		-- a config table for more control:
-		--   Tab:AddPanel("Option")                              -- default, checkbox header
-		--   Tab:AddPanel({ Title = "Info", Toggleable = false }) -- title only, no checkbox
-		--   Tab:AddPanel({ Toggleable = false })                 -- no header at all, just a blank box
-		local cfg = titleOrConfig
-		if type(titleOrConfig) == "string" or titleOrConfig == nil then
-			cfg = { Title = titleOrConfig }
+	function Tab:SetActive(active)
+		if active then
+			Page.Visible = true
+
+			tween(TabButton, {
+				BackgroundColor3 = Theme.Accent,
+				BackgroundTransparency = 0,
+			}, Customization.Animation.Duration)
+
+			tween(TabIcon, {
+				ImageColor3 = Theme.ActiveText,
+			}, Customization.Animation.Duration)
+
+			tween(TabLabel, {
+				TextColor3 = Theme.ActiveText,
+			}, Customization.Animation.Duration)
+		else
+			Page.Visible = false
+
+			tween(TabButton, {
+				BackgroundColor3 = Theme.SidebarItem,
+				BackgroundTransparency = Customization.Transparency.Tab,
+			}, Customization.Animation.Duration)
+
+			tween(TabIcon, {
+				ImageColor3 = Theme.SubText,
+			}, Customization.Animation.Duration)
+
+			tween(TabLabel, {
+				TextColor3 = Theme.SubText,
+			}, Customization.Animation.Duration)
 		end
-		local title = cfg.Title
-		local toggleable = cfg.Toggleable
-		if toggleable == nil then
-			toggleable = true
-		end
+	end
+
+	function Tab:AddPanel(config)
+		config = config or {}
+
+		local panelTitle = config.Title or config.Name or ""
 
 		local Panel = create("Frame", {
-			Size = UDim2.fromOffset(Customization.Size.PanelWidth, 40),
-			AutomaticSize = Enum.AutomaticSize.Y,
+			Name = panelTitle ~= "" and panelTitle or "Panel",
+			Size = UDim2.new(1, 0, 0, config.Height or 100),
 			BackgroundColor3 = Theme.Panel,
 			BackgroundTransparency = Customization.Transparency.Panel,
 			Parent = Page,
-		}, { corner(Customization.Corners.Panel), stroke(Theme.PanelBorder, Customization.Stroke.Thickness) })
-
-		local Padding = create("UIPadding", {
-			PaddingTop = UDim.new(0, Customization.Size.Padding),
-			PaddingBottom = UDim.new(0, Customization.Size.Padding),
-			PaddingLeft = UDim.new(0, Customization.Size.Padding),
-			PaddingRight = UDim.new(0, Customization.Size.Padding),
+		}, {
+			corner(Customization.Corners.Panel),
+			stroke(Theme.PanelBorder, Customization.Stroke.Thickness)
 		})
-		Padding.Parent = Panel
 
-		local Layout = create("UIListLayout", {
-			Padding = UDim.new(0, Customization.Size.Spacing),
+		local PanelLayout = create("UIListLayout", {
+			Padding = UDim.new(0, 8),
 			SortOrder = Enum.SortOrder.LayoutOrder,
+			Parent = Panel,
 		})
-		Layout.Parent = Panel
 
-		local panelEnabled = true
+		local PanelPadding = create("UIPadding", {
+			PaddingTop = UDim.new(0, 12),
+			PaddingBottom = UDim.new(0, 12),
+			PaddingLeft = UDim.new(0, 12),
+			PaddingRight = UDim.new(0, 12),
+			Parent = Panel,
+		})
 
-		-- Header row: checkbox (optional) + title (optional). Skipped
-		-- entirely if there's no title and no checkbox wanted.
-		if title or toggleable then
-			local HeaderRow = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 18),
-				BackgroundTransparency = 1,
-				LayoutOrder = 0,
-				Parent = Panel,
-			})
-
-			local titleOffset = 0
-
-			if toggleable then
-				local Checkbox = create("Frame", {
-					Size = UDim2.fromOffset(16, 16),
-					BackgroundColor3 = Theme.Panel,
-					Parent = HeaderRow,
-				}, { corner(4), stroke(Theme.SubText, 1) })
-
-				local Check = createIcon(Checkbox, "check", 11, Theme.Text, UDim2.fromScale(0.5, 0.5), 2)
-				if Check then
-					Check.Visible = cfg.Default ~= false
-				end
-				panelEnabled = cfg.Default ~= false
-
-				local ToggleButton = create("TextButton", {
-					Size = UDim2.fromScale(1, 1),
-					BackgroundTransparency = 1,
-					Text = "",
-					Parent = Checkbox,
-				})
-				ToggleButton.MouseButton1Click:Connect(function()
-					panelEnabled = not panelEnabled
-					Check.Visible = panelEnabled
-					if cfg.Callback then
-						cfg.Callback(panelEnabled)
-					end
-				end)
-
-				titleOffset = 24
-			end
-
-			if title then
-				create("TextLabel", {
-					Text = title,
-					Font = Theme.FontBold,
-					TextSize = 14,
-					TextColor3 = Theme.Text,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					BackgroundTransparency = 1,
-					Position = UDim2.fromOffset(titleOffset, 0),
-					Size = UDim2.new(1, -titleOffset, 1, 0),
-					Parent = HeaderRow,
-				})
-			end
-		end
-
-		local order = 1
-
-		local PanelObj = { Frame = Panel }
-
-		function PanelObj:IsEnabled()
-			return panelEnabled
-		end
-
-		function PanelObj:AddSlider(cfg)
-			cfg = cfg or {}
-			order += 1
-
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 40),
-				BackgroundTransparency = 1,
-				LayoutOrder = order,
-				Parent = Panel,
-			})
-
-			create("TextLabel", {
-				Text = cfg.Name or "slider",
-				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.SubText,
+		if panelTitle ~= "" then
+			local TitleLabel = create("TextLabel", {
+				Name = "Title",
+				Text = panelTitle,
+				Font = Theme.FontBold,
+				TextSize = Customization.TextSizes.PanelTitle,
+				TextColor3 = Theme.Text,
 				TextXAlignment = Enum.TextXAlignment.Left,
 				BackgroundTransparency = 1,
-				Size = UDim2.new(1, 0, 0, 16),
-				Parent = Wrap,
+				Size = UDim2.new(1, 0, 0, 24),
+				LayoutOrder = 1,
+				Parent = Panel,
+			})
+		end
+
+		local PanelObj = {
+			Frame = Panel,
+			Tab = Tab,
+			Window = Window,
+			Elements = {},
+		}
+
+		--// SLIDER ------------------------------------------------------
+
+		function PanelObj:AddSlider(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Slider"
+			local min = config.Min or 0
+			local max = config.Max or 100
+			local default = config.Default
+			local increment = config.Increment or 1
+
+			if default == nil then
+				default = min
+			end
+
+			default = math.clamp(default, min, max)
+
+			local Row = create("Frame", {
+				Name = name,
+				Size = UDim2.new(1, 0, 0, 54),
+				BackgroundTransparency = 1,
+				LayoutOrder = #PanelObj.Elements + 1,
+				Parent = Panel,
 			})
 
-			local Track = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 20),
-				Position = UDim2.fromOffset(0, 20),
-				BackgroundColor3 = Theme.SliderTrack,
-				BackgroundTransparency = Customization.Transparency.Input,
-				Parent = Wrap,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
-
-			local min = cfg.Min or 0
-			local max = cfg.Max or 100
-			local default = cfg.Default or min
-			local pct = math.clamp((default - min) / (max - min), 0, 1)
-
-			local Fill = create("Frame", {
-				Size = UDim2.new(pct, 0, 1, 0),
-				BackgroundColor3 = Theme.SliderFill,
-				Parent = Track,
-			}, { corner(6) })
+			local Label = create("TextLabel", {
+				Text = name,
+				Font = Theme.Font,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, -70, 0, 20),
+				Parent = Row,
+			})
 
 			local ValueLabel = create("TextLabel", {
-				Text = tostring(math.floor(default)) .. "%",
-				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.Text,
+				Text = tostring(default),
+				Font = Theme.FontBold,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Accent,
+				TextXAlignment = Enum.TextXAlignment.Right,
 				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
-				Parent = Track,
+				Position = UDim2.new(1, -70, 0, 0),
+				Size = UDim2.fromOffset(70, 20),
+				Parent = Row,
 			})
 
+			local SliderBack = create("Frame", {
+				Size = UDim2.new(1, 0, 0, 6),
+				Position = UDim2.fromOffset(0, 30),
+				BackgroundColor3 = Theme.Slider,
+				BackgroundTransparency = Customization.Transparency.Slider,
+				Parent = Row,
+			}, {
+				corner(6)
+			})
+
+			local percentage = (default - min) / (max - min)
+
+			local SliderFill = create("Frame", {
+				Size = UDim2.new(percentage, 0, 1, 0),
+				BackgroundColor3 = Theme.Accent,
+				BackgroundTransparency = Customization.Transparency.SliderFill,
+				Parent = SliderBack,
+			}, {
+				corner(6)
+			})
+
+			local SliderButton = create("TextButton", {
+				Text = "",
+				AutoButtonColor = false,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, 0, 1, 18),
+				Position = UDim2.fromOffset(0, -6),
+				Parent = SliderBack,
+			})
+
+			local value = default
 			local dragging = false
-			local function updateFromX(xpos)
-				local rel = math.clamp((xpos - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
-				Fill.Size = UDim2.new(rel, 0, 1, 0)
-				local value = math.floor(min + (max - min) * rel)
-				ValueLabel.Text = tostring(value) .. "%"
-				if cfg.Callback then
-					cfg.Callback(value)
+
+			local function setValue(newValue, fireCallback)
+				newValue = math.clamp(newValue, min, max)
+
+				if increment > 0 then
+					newValue = min
+						+ math.floor(
+							((newValue - min) / increment) + 0.5
+						) * increment
+
+					newValue = math.clamp(newValue, min, max)
+				end
+
+				value = newValue
+
+				local percent
+
+				if max == min then
+					percent = 0
+				else
+					percent = (value - min) / (max - min)
+				end
+
+				tween(SliderFill, {
+					Size = UDim2.new(percent, 0, 1, 0)
+				}, 0.08)
+
+				ValueLabel.Text = tostring(value)
+
+				if fireCallback and config.Callback then
+					config.Callback(value)
 				end
 			end
 
-			Track.InputBegan:Connect(function(input)
-				if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1) or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
-					dragging = true
-					updateFromX(input.Position.X)
-				end
+			SliderButton.MouseButton1Down:Connect(function()
+				dragging = true
 			end)
-			UserInputService.InputChanged:Connect(function(input)
-				if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-					updateFromX(input.Position.X)
-				end
-			end)
+
 			UserInputService.InputEnded:Connect(function(input)
-				if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1) or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
+				if input.UserInputType == Enum.UserInputType.MouseButton1
+					or input.UserInputType == Enum.UserInputType.Touch
+				then
 					dragging = false
 				end
 			end)
 
-			return Wrap
-		end
-
-		function PanelObj:AddDropdown(cfg)
-			cfg = cfg or {}
-			order += 1
-
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 56),
-				BackgroundTransparency = 1,
-				LayoutOrder = order,
-				Parent = Panel,
-			})
-
-			create("TextLabel", {
-				Text = cfg.Name or "text",
-				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.SubText,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, 0, 0, 16),
-				Parent = Wrap,
-			})
-
-			local Box = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 32),
-				Position = UDim2.fromOffset(0, 20),
-				BackgroundColor3 = Theme.SliderTrack,
-				Parent = Wrap,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
-
-			local SelectedLabel = create("TextLabel", {
-				Text = cfg.Default or (cfg.Options and cfg.Options[1]) or "",
-				Font = Theme.Font,
-				TextSize = 13,
-				TextColor3 = Theme.Text,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Position = UDim2.fromOffset(10, 0),
-				Size = UDim2.new(1, -34, 1, 0),
-				Parent = Box,
-			})
-
-			createIcon(Box, "chevron-down", 14, Theme.SubText, UDim2.new(1, -14, 0.5, 0), 2)
-
-			local ListOpen = false
-			local OptionsList = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 0),
-				Position = UDim2.fromOffset(0, 54),
-				BackgroundColor3 = Theme.Panel,
-				ClipsDescendants = true,
-				Visible = false,
-				ZIndex = 5,
-				Parent = Wrap,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
-
-			local OptLayout = create("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder })
-			OptLayout.Parent = OptionsList
-
-			for i, opt in ipairs(cfg.Options or {}) do
-				local OptButton = create("TextButton", {
-					Text = opt,
-					Font = Theme.Font,
-					TextSize = 13,
-					TextColor3 = Theme.Text,
-					BackgroundColor3 = Theme.Panel,
-					Size = UDim2.new(1, 0, 0, 28),
-					LayoutOrder = i,
-					AutoButtonColor = false,
-					Parent = OptionsList,
-				})
-				OptButton.MouseButton1Click:Connect(function()
-					SelectedLabel.Text = opt
-					ListOpen = false
-					OptionsList.Visible = false
-					OptionsList.Size = UDim2.new(1, 0, 0, 0)
-					if cfg.Callback then
-						cfg.Callback(opt)
-					end
-				end)
-			end
-
-			local Clicker = create("TextButton", {
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-				Text = "",
-				Parent = Box,
-			})
-			Clicker.MouseButton1Click:Connect(function()
-				ListOpen = not ListOpen
-				OptionsList.Visible = ListOpen
-				local count = #(cfg.Options or {})
-				OptionsList.Size = UDim2.new(1, 0, 0, ListOpen and (count * 28) or 0)
-			end)
-
-			return Wrap
-		end
-
-		function PanelObj:AddToggle(cfg)
-			cfg = cfg or {}
-			order += 1
-
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 20),
-				BackgroundTransparency = 1,
-				LayoutOrder = order,
-				Parent = Panel,
-			})
-
-			create("TextLabel", {
-				Text = cfg.Name or "toggle",
-				Font = Theme.Font,
-				TextSize = 13,
-				TextColor3 = Theme.Text,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, -46, 1, 0),
-				Parent = Wrap,
-			})
-
-			local Track = create("Frame", {
-				Size = UDim2.fromOffset(36, 18),
-				Position = UDim2.new(1, -36, 0.5, -9),
-				BackgroundColor3 = cfg.Default and Theme.Accent or Theme.SliderTrack,
-				BackgroundTransparency = Customization.Transparency.Input,
-				Parent = Wrap,
-			}, { corner(9), stroke(Theme.PanelBorder, 1) })
-
-			local Knob = create("Frame", {
-				Size = UDim2.fromOffset(14, 14),
-				Position = cfg.Default and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7),
-				BackgroundColor3 = Theme.Text,
-				Parent = Track,
-			}, { corner(7) })
-
-			local state = cfg.Default or false
-			table.insert(WindowRef._accentListeners, function(color)
-				if state then
-					Track.BackgroundColor3 = color
-				end
-			end)
-
-			local Clicker = create("TextButton", {
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-				Text = "",
-				Parent = Track,
-			})
-			Clicker.MouseButton1Click:Connect(function()
-				state = not state
-				tween(Track, { BackgroundColor3 = state and Theme.Accent or Theme.SliderTrack }, 0.15)
-				tween(Knob, { Position = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7) }, 0.15)
-				if cfg.Callback then
-					cfg.Callback(state)
-				end
-			end)
-
-			return Wrap
-		end
-
-		function PanelObj:AddButton(cfg)
-			cfg = cfg or {}
-			order += 1
-
-			local idleColor = cfg.Accent and Theme.Accent or Colors.ButtonGray
-			local hoverColor = cfg.Accent and Theme.AccentDim or Theme.SidebarHover
-
-			local Btn = create("TextButton", {
-				Text = cfg.Icon and "      " .. (cfg.Name or "Button") or (cfg.Name or "Button"),
-				Font = Theme.FontBold,
-				TextSize = 13,
-				TextColor3 = cfg.Accent and Color3.fromRGB(10, 10, 10) or Theme.Text,
-				BackgroundColor3 = idleColor,
-				BackgroundTransparency = Customization.Transparency.Button,
-				Size = UDim2.new(1, 0, 0, Customization.Size.ButtonHeight),
-				AutoButtonColor = false,
-				LayoutOrder = order,
-				Parent = Panel,
-			}, { corner(Customization.Corners.Button), stroke(Theme.PanelBorder, 1) })
-
-			if cfg.Icon then
-				createIcon(Btn, cfg.Icon, 15, cfg.Accent and Color3.fromRGB(10, 10, 10) or Theme.Text, UDim2.new(0, 16, 0.5, 0), 2)
-			end
-
-			if cfg.Accent then
-				table.insert(WindowRef._accentListeners, function(color)
-					idleColor = color
-					tween(Btn, { BackgroundColor3 = color }, 0.15)
-				end)
-			end
-
-			Btn.MouseEnter:Connect(function()
-				tween(Btn, { BackgroundColor3 = hoverColor }, 0.12)
-			end)
-			Btn.MouseLeave:Connect(function()
-				tween(Btn, { BackgroundColor3 = idleColor }, 0.12)
-			end)
-			Btn.MouseButton1Click:Connect(function()
-				if cfg.Callback then
-					cfg.Callback()
-				end
-			end)
-
-			return Btn
-		end
-
-		function PanelObj:AddKeybind(cfg)
-			cfg = cfg or {}
-			order += 1
-
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 20),
-				BackgroundTransparency = 1,
-				LayoutOrder = order,
-				Parent = Panel,
-			})
-
-			create("TextLabel", {
-				Text = cfg.Name or "keybind",
-				Font = Theme.Font,
-				TextSize = 13,
-				TextColor3 = Theme.Text,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, -90, 1, 0),
-				Parent = Wrap,
-			})
-
-			local KeyStroke = stroke(Theme.PanelBorder, 1)
-			local Box = create("Frame", {
-				Size = UDim2.fromOffset(80, 20),
-				Position = UDim2.new(1, -80, 0, 0),
-				BackgroundColor3 = Theme.SliderTrack,
-				Parent = Wrap,
-			}, { corner(Customization.Corners.Small), KeyStroke })
-
-			if cfg.Icon then
-				createIcon(Wrap, cfg.Icon, 14, Theme.SubText, UDim2.new(1, -92, 0.5, 0), 2)
-			end
-
-			local currentKey = cfg.Default
-
-			local KeyLabel = create("TextLabel", {
-				Text = currentKey and currentKey.Name or "None",
-				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.SubText,
-				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
-				Parent = Box,
-			})
-
-			local listening = false
-			local Clicker = create("TextButton", {
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-				Text = "",
-				Parent = Box,
-			})
-
-			Clicker.MouseButton1Click:Connect(function()
-				listening = true
-				KeyLabel.Text = "..."
-				tween(KeyStroke, { Color = Theme.Accent }, 0.15)
-			end)
-
-			UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-				if input.UserInputType ~= Enum.UserInputType.Keyboard then
+			UserInputService.InputChanged:Connect(function(input)
+				if not dragging then
 					return
 				end
 
+				if
+					input.UserInputType ~= Enum.UserInputType.MouseMovement
+					and input.UserInputType ~= Enum.UserInputType.Touch
+				then
+					return
+				end
+
+				local x = input.Position.X
+				local startX = SliderBack.AbsolutePosition.X
+				local width = SliderBack.AbsoluteSize.X
+
+				if width <= 0 then
+					return
+				end
+
+				local percent = math.clamp(
+					(x - startX) / width,
+					0,
+					1
+				)
+
+				setValue(
+					min + ((max - min) * percent),
+					true
+				)
+			end)
+
+			setValue(default, false)
+
+			local SliderObj = {
+				Frame = Row,
+				Get = function()
+					return value
+				end,
+				Set = function(_, newValue)
+					setValue(newValue, true)
+				end,
+			}
+
+			table.insert(PanelObj.Elements, SliderObj)
+
+			return SliderObj
+		end
+
+		--// DROPDOWN ----------------------------------------------------
+
+		function PanelObj:AddDropdown(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Dropdown"
+			local options = config.Options or {}
+			local default = config.Default
+
+			local Row = create("Frame", {
+				Name = name,
+				Size = UDim2.new(1, 0, 0, 58),
+				BackgroundTransparency = 1,
+				LayoutOrder = #PanelObj.Elements + 1,
+				Parent = Panel,
+			})
+
+			local Label = create("TextLabel", {
+				Text = name,
+				Font = Theme.Font,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, 0, 0, 20),
+				Parent = Row,
+			})
+
+			local DropdownButton = create("TextButton", {
+				Text = "",
+				AutoButtonColor = false,
+				Size = UDim2.new(1, 0, 0, 32),
+				Position = UDim2.fromOffset(0, 25),
+				BackgroundColor3 = Theme.Input,
+				BackgroundTransparency = Customization.Transparency.Input,
+				Parent = Row,
+			}, {
+				corner(Customization.Corners.Input),
+				stroke(Theme.PanelBorder, 1)
+			})
+
+			local SelectedLabel = create("TextLabel", {
+				Text = tostring(default or options[1] or ""),
+				Font = Theme.Font,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextTruncate = Enum.TextTruncate.AtEnd,
+				BackgroundTransparency = 1,
+				Position = UDim2.fromOffset(10, 0),
+				Size = UDim2.new(1, -36, 1, 0),
+				Parent = DropdownButton,
+			})
+
+			local Arrow = createIcon(
+				"chevron-down",
+				16,
+				Theme.SubText,
+				DropdownButton
+			)
+
+			Arrow.Position = UDim2.new(1, -26, 0.5, -8)
+
+			local DropdownList = create("Frame", {
+				Name = "DropdownList",
+				Size = UDim2.new(1, 0, 0, 0),
+				Position = UDim2.new(0, 0, 1, 4),
+				BackgroundColor3 = Theme.Panel,
+				BackgroundTransparency = Customization.Transparency.Panel,
+				Visible = false,
+				ZIndex = 100,
+				Parent = DropdownButton,
+			}, {
+				corner(Customization.Corners.Input),
+				stroke(Theme.PanelBorder, 1)
+			})
+
+			local DropdownLayout = create("UIListLayout", {
+				Padding = UDim.new(0, 2),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				Parent = DropdownList,
+			})
+
+			local selected = default or options[1]
+			local opened = false
+
+			local function closeDropdown()
+				opened = false
+				DropdownList.Visible = false
+				Arrow.Rotation = 0
+			end
+
+			local function openDropdown()
+				opened = true
+				DropdownList.Visible = true
+				Arrow.Rotation = 180
+			end
+
+			local function setSelected(option, fireCallback)
+				selected = option
+				SelectedLabel.Text = tostring(option)
+
+				if fireCallback and config.Callback then
+					config.Callback(option)
+				end
+			end
+
+			for index, option in ipairs(options) do
+				local OptionButton = create("TextButton", {
+					Name = tostring(option),
+					Text = tostring(option),
+					Font = Theme.Font,
+					TextSize = Customization.TextSizes.Element,
+					TextColor3 = Theme.Text,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					AutoButtonColor = false,
+					BackgroundColor3 = Theme.SidebarItem,
+					BackgroundTransparency = 0,
+					Size = UDim2.new(1, -8, 0, 28),
+					Position = UDim2.fromOffset(4, 0),
+					LayoutOrder = index,
+					ZIndex = 101,
+					Parent = DropdownList,
+				}, {
+					corner(6)
+				})
+
+				local optionPadding = create("UIPadding", {
+					PaddingLeft = UDim.new(0, 8),
+					Parent = OptionButton,
+				})
+
+				OptionButton.MouseButton1Click:Connect(function()
+					setSelected(option, true)
+					closeDropdown()
+				end)
+			end
+
+			DropdownButton.MouseButton1Click:Connect(function()
+				if opened then
+					closeDropdown()
+				else
+					openDropdown()
+				end
+			end)
+
+			-- Keep the dropdown inside the current panel as much as possible.
+			DropdownList:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+				DropdownList.Size = UDim2.new(
+					1,
+					0,
+					0,
+					math.min(
+						#options * 30 + 8,
+						180
+					)
+				)
+			end)
+
+			DropdownList.Size = UDim2.new(
+				1,
+				0,
+				0,
+				math.min(
+					#options * 30 + 8,
+					180
+				)
+			)
+
+			local DropdownObj = {
+				Frame = Row,
+
+				Get = function()
+					return selected
+				end,
+
+				Set = function(_, option)
+					setSelected(option, true)
+				end,
+
+				Close = function()
+					closeDropdown()
+				end,
+			}
+
+			table.insert(PanelObj.Elements, DropdownObj)
+
+			return DropdownObj
+		end
+
+		--// TOGGLE ------------------------------------------------------
+
+		function PanelObj:AddToggle(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Toggle"
+			local enabled = config.Default == true
+
+			local Row = create("TextButton", {
+				Name = name,
+				Text = "",
+				AutoButtonColor = false,
+				Size = UDim2.new(1, 0, 0, 38),
+				BackgroundTransparency = 1,
+				LayoutOrder = #PanelObj.Elements + 1,
+				Parent = Panel,
+			})
+
+			local Label = create("TextLabel", {
+				Text = name,
+				Font = Theme.Font,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, -64, 1, 0),
+				Parent = Row,
+			})
+
+			local ToggleBack = create("Frame", {
+				Size = UDim2.fromOffset(42, 22),
+				Position = UDim2.new(1, -42, 0.5, -11),
+				BackgroundColor3 = Theme.Checkbox,
+				BackgroundTransparency = Customization.Transparency.Checkbox,
+				Parent = Row,
+			}, {
+				corner(12)
+			})
+
+			local ToggleFill = create("Frame", {
+				Size = UDim2.fromOffset(18, 18),
+				Position = UDim2.fromOffset(2, 2),
+				BackgroundColor3 = Theme.SubText,
+				Parent = ToggleBack,
+			}, {
+				corner(10)
+			})
+
+			local function updateToggle(fireCallback)
+				if enabled then
+					tween(ToggleBack, {
+						BackgroundColor3 = Theme.Accent,
+						BackgroundTransparency = 0,
+					}, Customization.Animation.Duration)
+
+					tween(ToggleFill, {
+						Position = UDim2.new(1, -20, 0, 2),
+						BackgroundColor3 = Theme.ActiveText,
+					}, Customization.Animation.Duration)
+				else
+					tween(ToggleBack, {
+						BackgroundColor3 = Theme.Checkbox,
+						BackgroundTransparency = Customization.Transparency.Checkbox,
+					}, Customization.Animation.Duration)
+
+					tween(ToggleFill, {
+						Position = UDim2.fromOffset(2, 2),
+						BackgroundColor3 = Theme.SubText,
+					}, Customization.Animation.Duration)
+				end
+
+				if fireCallback and config.Callback then
+					config.Callback(enabled)
+				end
+			end
+
+			Row.MouseButton1Click:Connect(function()
+				enabled = not enabled
+				updateToggle(true)
+			end)
+
+			updateToggle(false)
+
+			local ToggleObj = {
+				Frame = Row,
+
+				Get = function()
+					return enabled
+				end,
+
+				Set = function(_, state)
+					enabled = state == true
+					updateToggle(true)
+				end,
+			}
+
+			table.insert(PanelObj.Elements, ToggleObj)
+
+			return ToggleObj
+		end
+        		--// BUTTON ------------------------------------------------------
+
+		function PanelObj:AddButton(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Button"
+
+			local Button = create("TextButton", {
+				Name = name,
+				Text = name,
+				Font = Theme.FontBold,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.ActiveText,
+				AutoButtonColor = false,
+				Size = UDim2.new(1, 0, 0, 36),
+				BackgroundColor3 = Theme.Accent,
+				BackgroundTransparency = Customization.Transparency.Button,
+				LayoutOrder = #PanelObj.Elements + 1,
+				Parent = Panel,
+			}, {
+				corner(Customization.Corners.Button)
+			})
+
+			Button.MouseEnter:Connect(function()
+				tween(Button, {
+					BackgroundTransparency = math.max(
+						0,
+						Customization.Transparency.Button - 0.1
+					),
+				}, Customization.Animation.Duration)
+			end)
+
+			Button.MouseLeave:Connect(function()
+				tween(Button, {
+					BackgroundTransparency = Customization.Transparency.Button,
+				}, Customization.Animation.Duration)
+			end)
+
+			Button.MouseButton1Click:Connect(function()
+				if config.Callback then
+					config.Callback()
+				end
+			end)
+
+			table.insert(Window._accentListeners, function(color)
+				tween(Button, {
+					BackgroundColor3 = color
+				}, Customization.Animation.Duration)
+			end)
+
+			local ButtonObj = {
+				Frame = Button,
+
+				SetText = function(_, text)
+					Button.Text = tostring(text)
+				end,
+
+				Fire = function()
+					if config.Callback then
+						config.Callback()
+					end
+				end,
+			}
+
+			table.insert(PanelObj.Elements, ButtonObj)
+
+			return ButtonObj
+		end
+
+		--// KEYBIND -----------------------------------------------------
+
+		function PanelObj:AddKeybind(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Keybind"
+			local currentKey = config.Default or Enum.KeyCode.Unknown
+			local listening = false
+
+			local Row = create("Frame", {
+				Name = name,
+				Size = UDim2.new(1, 0, 0, 38),
+				BackgroundTransparency = 1,
+				LayoutOrder = #PanelObj.Elements + 1,
+				Parent = Panel,
+			})
+
+			local Label = create("TextLabel", {
+				Text = name,
+				Font = Theme.Font,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, -100, 1, 0),
+				Parent = Row,
+			})
+
+			local KeyButton = create("TextButton", {
+				Name = "Key",
+				Text = currentKey.Name,
+				Font = Theme.FontBold,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
+				AutoButtonColor = false,
+				BackgroundColor3 = Theme.Input,
+				BackgroundTransparency = Customization.Transparency.Input,
+				Size = UDim2.fromOffset(90, 30),
+				Position = UDim2.new(1, -90, 0.5, -15),
+				Parent = Row,
+			}, {
+				corner(Customization.Corners.Input),
+				stroke(Theme.PanelBorder, 1)
+			})
+
+			local function setKey(key, fireCallback)
+				currentKey = key
+				KeyButton.Text = key.Name
+
+				if fireCallback and config.Callback then
+					config.Callback(key)
+				end
+			end
+
+			KeyButton.MouseButton1Click:Connect(function()
 				if listening then
-					if input.KeyCode == Enum.KeyCode.Escape then
-						-- cancel binding, keep previous key
-						KeyLabel.Text = currentKey and currentKey.Name or "None"
-					else
-						currentKey = input.KeyCode
-						KeyLabel.Text = currentKey.Name
-						if cfg.OnBind then
-							cfg.OnBind(currentKey)
+					return
+				end
+
+				listening = true
+				KeyButton.Text = "Press key..."
+
+				local connection
+				connection = UserInputService.InputBegan:Connect(function(
+					input,
+					gameProcessed
+				)
+					if gameProcessed then
+						return
+					end
+
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						setKey(input.KeyCode, true)
+						listening = false
+
+						if connection then
+							connection:Disconnect()
 						end
 					end
-					listening = false
-					tween(KeyStroke, { Color = Theme.PanelBorder }, 0.15)
-				elseif not gameProcessedEvent and currentKey and input.KeyCode == currentKey then
-					if cfg.Callback then
-						cfg.Callback()
+				end)
+			end)
+
+			UserInputService.InputBegan:Connect(function(input, gameProcessed)
+				if gameProcessed or listening then
+					return
+				end
+
+				if
+					input.UserInputType == Enum.UserInputType.Keyboard
+					and input.KeyCode == currentKey
+				then
+					if config.Callback then
+						config.Callback(currentKey)
 					end
 				end
 			end)
 
-			return Wrap
+			local KeybindObj = {
+				Frame = Row,
+
+				Get = function()
+					return currentKey
+				end,
+
+				Set = function(_, key)
+					if typeof(key) == "EnumItem" then
+						setKey(key, true)
+					end
+				end,
+			}
+
+			table.insert(PanelObj.Elements, KeybindObj)
+
+			return KeybindObj
 		end
 
-		function PanelObj:AddGraph(cfg)
-			cfg = cfg or {}
-			order += 1
+		--// GRAPH -------------------------------------------------------
 
-			local pointCount = cfg.Points or 30
-			local fixedMin, fixedMax = cfg.Min, cfg.Max
-			local barColor = cfg.Color or Colors.GraphGray
+		function PanelObj:AddGraph(config)
+			config = config or {}
 
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, cfg.Height and (cfg.Height + 22) or 82),
+			local name = config.Name or config.Title or "Graph"
+			local values = config.Values or {}
+
+			local Row = create("Frame", {
+				Name = name,
+				Size = UDim2.new(1, 0, 0, config.Height or 150),
 				BackgroundTransparency = 1,
-				LayoutOrder = order,
+				LayoutOrder = #PanelObj.Elements + 1,
 				Parent = Panel,
 			})
 
-			local NameLabel = create("TextLabel", {
-				Text = cfg.Name or "graph",
-				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.SubText,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, -60, 0, 16),
-				Parent = Wrap,
-			})
+			if name ~= "" then
+				create("TextLabel", {
+					Text = name,
+					Font = Theme.Font,
+					TextSize = Customization.TextSizes.Element,
+					TextColor3 = Theme.Text,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BackgroundTransparency = 1,
+					Size = UDim2.new(1, 0, 0, 22),
+					Parent = Row,
+				})
+			end
 
-			local ValueLabel = create("TextLabel", {
-				Text = "",
-				Font = Theme.FontBold,
-				TextSize = 12,
-				TextColor3 = Theme.Text,
-				TextXAlignment = Enum.TextXAlignment.Right,
-				BackgroundTransparency = 1,
-				Position = UDim2.new(1, -60, 0, 0),
-				Size = UDim2.fromOffset(60, 16),
-				Parent = Wrap,
-			})
-
-			local GraphBox = create("Frame", {
-				Size = UDim2.new(1, 0, 0, cfg.Height or 60),
-				Position = UDim2.fromOffset(0, 20),
-				BackgroundColor3 = Theme.SliderTrack,
+			local Graph = create("Frame", {
+				Name = "Graph",
+				Size = UDim2.new(1, 0, 1, -26),
+				Position = UDim2.fromOffset(0, 26),
+				BackgroundColor3 = Theme.Graph,
+				BackgroundTransparency = Customization.Transparency.Graph,
 				ClipsDescendants = true,
-				Parent = Wrap,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
-
-			local BarLayout = create("UIListLayout", {
-				FillDirection = Enum.FillDirection.Horizontal,
-				VerticalAlignment = Enum.VerticalAlignment.Bottom,
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				Padding = UDim.new(0, 1),
+				Parent = Row,
+			}, {
+				corner(Customization.Corners.Input),
+				stroke(Theme.PanelBorder, 1)
 			})
-			BarLayout.Parent = GraphBox
 
-			local barWidthScale = 1 / pointCount
-			local bars = {}
-			local values = {}
+			local GraphPoints = {}
 
-			for i = 1, pointCount do
-				values[i] = 0
-				bars[i] = create("Frame", {
-					Size = UDim2.new(barWidthScale, -1, 0, 0),
-					BackgroundColor3 = barColor,
-					LayoutOrder = i,
-					Parent = GraphBox,
-				}, { corner(2) })
+			local function clearGraph()
+				for _, object in ipairs(GraphPoints) do
+					if object and object.Parent then
+						object:Destroy()
+					end
+				end
+
+				table.clear(GraphPoints)
 			end
 
-			local GraphObj = {}
+			local function drawGraph(data)
+				clearGraph()
 
-			function GraphObj:Push(value)
-				table.remove(values, 1)
-				table.insert(values, value)
+				if #data == 0 then
+					return
+				end
 
-				local lo, hi = fixedMin, fixedMax
-				if not lo or not hi then
-					lo, hi = math.huge, -math.huge
-					for _, v in ipairs(values) do
-						lo = math.min(lo, v)
-						hi = math.max(hi, v)
-					end
-					if lo == hi then
-						hi = lo + 1
+				local minimum = math.huge
+				local maximum = -math.huge
+
+				for _, value in ipairs(data) do
+					if type(value) == "number" then
+						minimum = math.min(minimum, value)
+						maximum = math.max(maximum, value)
 					end
 				end
 
-				for i, bar in ipairs(bars) do
-					local v = values[i]
-					local pct = math.clamp((v - lo) / (hi - lo), 0, 1)
-					bar.Size = UDim2.new(barWidthScale, -1, pct, 0)
+				if minimum == math.huge then
+					return
 				end
 
-				if cfg.ShowValue ~= false then
-					local displayValue = value
-					if cfg.Round then
-						displayValue = math.floor(value * 10 ^ cfg.Round + 0.5) / 10 ^ cfg.Round
+				if minimum == maximum then
+					maximum = minimum + 1
+				end
+
+				for index = 1, #data - 1 do
+					local a = data[index]
+					local b = data[index + 1]
+
+					if type(a) == "number" and type(b) == "number" then
+						local x1 = (index - 1) / math.max(#data - 1, 1)
+						local x2 = index / math.max(#data - 1, 1)
+
+						local y1 = 1 - ((a - minimum) / (maximum - minimum))
+						local y2 = 1 - ((b - minimum) / (maximum - minimum))
+
+						local p1 = Vector2.new(
+							x1 * Graph.AbsoluteSize.X,
+							y1 * Graph.AbsoluteSize.Y
+						)
+
+						local p2 = Vector2.new(
+							x2 * Graph.AbsoluteSize.X,
+							y2 * Graph.AbsoluteSize.Y
+						)
+
+						local distance = (p2 - p1).Magnitude
+						local angle = math.deg(
+							math.atan2(
+								p2.Y - p1.Y,
+								p2.X - p1.X
+							)
+						)
+
+						local segment = create("Frame", {
+							AnchorPoint = Vector2.new(0, 0.5),
+							Position = UDim2.fromOffset(
+								p1.X,
+								p1.Y
+							),
+							Size = UDim2.fromOffset(
+								distance,
+								2
+							),
+							Rotation = angle,
+							BackgroundColor3 = Theme.Accent,
+							BorderSizePixel = 0,
+							ZIndex = 2,
+							Parent = Graph,
+						})
+
+						table.insert(GraphPoints, segment)
 					end
-					ValueLabel.Text = tostring(displayValue) .. (cfg.Suffix or "")
 				end
 			end
+
+			drawGraph(values)
+
+			local GraphObj = {
+				Frame = Row,
+
+				SetData = function(_, data)
+					if type(data) == "table" then
+						values = data
+						drawGraph(values)
+					end
+				end,
+
+				GetData = function()
+					return values
+				end,
+			}
+
+			table.insert(PanelObj.Elements, GraphObj)
 
 			return GraphObj
 		end
 
-		function PanelObj:AddTextbox(cfg)
-			cfg = cfg or {}
-			order += 1
+		--// TEXTBOX -----------------------------------------------------
 
-			local Wrap = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 56),
+		function PanelObj:AddTextbox(config)
+			config = config or {}
+
+			local name = config.Name or config.Title or "Textbox"
+			local placeholder = config.Placeholder or ""
+			local defaultText = config.Default or ""
+
+			local Row = create("Frame", {
+				Name = name,
+				Size = UDim2.new(1, 0, 0, 58),
 				BackgroundTransparency = 1,
-				LayoutOrder = order,
+				LayoutOrder = #PanelObj.Elements + 1,
 				Parent = Panel,
 			})
 
 			create("TextLabel", {
-				Text = cfg.Name or "text",
+				Text = name,
 				Font = Theme.Font,
-				TextSize = 12,
-				TextColor3 = Theme.SubText,
+				TextSize = Customization.TextSizes.Element,
+				TextColor3 = Theme.Text,
 				TextXAlignment = Enum.TextXAlignment.Left,
 				BackgroundTransparency = 1,
-				Size = UDim2.new(1, 0, 0, 16),
-				Parent = Wrap,
+				Size = UDim2.new(1, 0, 0, 20),
+				Parent = Row,
 			})
 
-			local Box = create("Frame", {
-				Size = UDim2.new(1, 0, 0, 32),
-				Position = UDim2.fromOffset(0, 20),
-				BackgroundColor3 = Theme.SliderTrack,
-				Parent = Wrap,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
-
-			local Input = create("TextBox", {
-				Text = cfg.Default or "",
-				PlaceholderText = cfg.Placeholder or "",
+			local Textbox = create("TextBox", {
+				Name = "Input",
+				Text = tostring(defaultText),
+				PlaceholderText = placeholder,
+				ClearTextOnFocus = false,
 				Font = Theme.Font,
-				TextSize = 13,
+				TextSize = Customization.TextSizes.Element,
 				TextColor3 = Theme.Text,
 				PlaceholderColor3 = Theme.SubText,
 				TextXAlignment = Enum.TextXAlignment.Left,
-				ClearTextOnFocus = false,
-				BackgroundTransparency = 1,
-				Position = UDim2.fromOffset(10, 0),
-				Size = UDim2.new(1, -20, 1, 0),
-				Parent = Box,
+				BackgroundColor3 = Theme.Input,
+				BackgroundTransparency = Customization.Transparency.Input,
+				Size = UDim2.new(1, 0, 0, 32),
+				Position = UDim2.fromOffset(0, 25),
+				Parent = Row,
+			}, {
+				corner(Customization.Corners.Input),
+				stroke(Theme.PanelBorder, 1)
 			})
 
-			Input.FocusLost:Connect(function(enterPressed)
-				if cfg.Callback then
-					cfg.Callback(Input.Text, enterPressed)
+			create("UIPadding", {
+				PaddingLeft = UDim.new(0, 10),
+				PaddingRight = UDim.new(0, 10),
+				Parent = Textbox,
+			})
+
+			Textbox.FocusLost:Connect(function(enterPressed)
+				if config.Callback then
+					config.Callback(Textbox.Text, enterPressed)
 				end
 			end)
 
-			return Wrap
+			local TextboxObj = {
+				Frame = Row,
+				TextBox = Textbox,
+
+				Get = function()
+					return Textbox.Text
+				end,
+
+				Set = function(_, text)
+					Textbox.Text = tostring(text)
+				end,
+
+				Clear = function()
+					Textbox.Text = ""
+				end,
+			}
+
+			table.insert(PanelObj.Elements, TextboxObj)
+
+			return TextboxObj
 		end
 
-		function PanelObj:AddLabel(cfg)
-			cfg = cfg or {}
-			order += 1
+		--// LABEL -------------------------------------------------------
+
+		function PanelObj:AddLabel(config)
+			config = config or {}
+
+			local text = config.Text or config.Name or ""
 
 			local Label = create("TextLabel", {
-				Text = cfg.Text or "",
-				Font = cfg.Bold and Theme.FontBold or Theme.Font,
-				TextSize = cfg.Size or 13,
-				TextColor3 = cfg.Color or (cfg.Muted and Theme.SubText or Theme.Text),
-				TextXAlignment = Enum.TextXAlignment.Left,
-				TextWrapped = true,
+				Name = config.Name or "Label",
+				Text = text,
+				Font = config.Bold and Theme.FontBold or Theme.Font,
+				TextSize = config.TextSize or Customization.TextSizes.Element,
+				TextColor3 = config.TextColor or Theme.Text,
+				TextXAlignment = config.Alignment or Enum.TextXAlignment.Left,
+				TextWrapped = config.Wrapped == true,
 				BackgroundTransparency = 1,
-				AutomaticSize = Enum.AutomaticSize.Y,
-				Size = UDim2.new(1, 0, 0, 0),
-				LayoutOrder = order,
+				Size = UDim2.new(1, 0, 0, config.Height or 24),
+				LayoutOrder = #PanelObj.Elements + 1,
 				Parent = Panel,
 			})
 
-			return Label
+			local LabelObj = {
+				Frame = Label,
+
+				SetText = function(_, newText)
+					Label.Text = tostring(newText)
+				end,
+			}
+
+			table.insert(PanelObj.Elements, LabelObj)
+
+			return LabelObj
 		end
 
-		function PanelObj:AddDivider()
-			order += 1
+		--// DIVIDER -----------------------------------------------------
 
-			local Line = create("Frame", {
+		function PanelObj:AddDivider()
+			local Divider = create("Frame", {
+				Name = "Divider",
 				Size = UDim2.new(1, 0, 0, 1),
 				BackgroundColor3 = Theme.PanelBorder,
 				BorderSizePixel = 0,
-				LayoutOrder = order,
+				LayoutOrder = #PanelObj.Elements + 1,
 				Parent = Panel,
 			})
 
-			return Line
+			local DividerObj = {
+				Frame = Divider,
+			}
+
+			table.insert(PanelObj.Elements, DividerObj)
+
+			return DividerObj
 		end
+
+		table.insert(Tab.Panels, PanelObj)
 
 		return PanelObj
 	end
 
-	clickable.MouseButton1Click:Connect(function()
-		for _, t in ipairs(self.Tabs) do
-			t.Page.Visible = false
-			t.Button.BackgroundColor3 = Theme.SidebarItem
+	-- Clicking a tab activates it and hides every other page.
+	TabButton.MouseButton1Click:Connect(function()
+		for _, otherTab in ipairs(Window.Tabs) do
+			otherTab:SetActive(otherTab == Tab)
 		end
-		Page.Visible = true
-		Button.BackgroundColor3 = Theme.SidebarHover
-		self.ActiveTab = Tab
+
+		Window.ActiveTab = Tab
 	end)
 
-	table.insert(self.Tabs, Tab)
+	table.insert(Window.Tabs, Tab)
 
-	-- First tab added becomes active by default
-	if #self.Tabs == 1 then
-		Page.Visible = true
-		Button.BackgroundColor3 = Theme.SidebarHover
-		self.ActiveTab = Tab
+	-- First tab automatically becomes active.
+	if #Window.Tabs == 1 then
+		Tab:SetActive(true)
+		Window.ActiveTab = Tab
+	else
+		Tab:SetActive(false)
 	end
 
 	return Tab
