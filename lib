@@ -131,8 +131,6 @@ local DefaultTabIcons = {
 }
 
 -- Full customization. Edit only this section to reskin the entire library.
-
--- Full customization. Edit only this section to reskin the entire library.
 local Customization = {
 	Colors = {
 		Background = Colors.EerieBlack, Panel = Colors.RaisinBlack, Border = Colors.DarkGray,
@@ -140,7 +138,7 @@ local Customization = {
 		Accent = Colors.Green, AccentDim = Colors.DarkGreen, Text = Colors.Gainsboro, SubText = Colors.SpanishGray,
 		Button = Colors.Charcoal, ButtonText = Colors.Gainsboro, Input = Colors.Charcoal,
 		SliderTrack = Colors.Charcoal, SliderFill = Colors.DavyGray, Checkbox = Colors.RaisinBlack, Graph = Colors.DavyGray, Avatar = Colors.Green,
-		White = Color3.fromRGB(255,255,255), Black = Color3.fromRGB(0,0),
+		White = Color3.fromRGB(255, 255, 255), Black = Color3.fromRGB(0, 0, 0),
 	},
 
 	Transparency = {
@@ -479,13 +477,13 @@ function Lib:CreateWindow(config)
 
 	-- Avatar: try to load the local player's real thumbnail; fall back to
 	-- an initial-letter badge if the thumbnail request fails (e.g. no
-	-- internet access in some Studio/test contexts).
+	-- internet access in some Studio/test contexts). No rounding/clipping —
+	-- shows the thumbnail as-is, square, with no colored backing box.
 	local AvatarFrame = create("Frame", {
 		Size = UDim2.fromOffset(28, 28),
-		BackgroundColor3 = Colors.Avatar,
-		ClipsDescendants = true,
+		BackgroundTransparency = 1,
 		Parent = ProfileRow,
-	}, { corner(14) })
+	})
 
 	local displayName = config.ProfileName or LocalPlayer.Name or "NAME"
 
@@ -497,6 +495,8 @@ function Lib:CreateWindow(config)
 		)
 	end)
 
+	local FallbackBadge = nil
+
 	if ok and thumbnailContent then
 		create("ImageLabel", {
 			Image = thumbnailContent,
@@ -506,12 +506,13 @@ function Lib:CreateWindow(config)
 			Parent = AvatarFrame,
 		})
 	else
-		create("TextLabel", {
+		FallbackBadge = create("TextLabel", {
 			Text = string.sub(displayName, 1, 1):upper(),
 			Font = Theme.FontBold,
 			TextSize = 14,
 			TextColor3 = Color3.fromRGB(10, 10, 10),
-			BackgroundTransparency = 1,
+			BackgroundColor3 = Colors.Avatar,
+			BackgroundTransparency = 0,
 			Size = UDim2.fromScale(1, 1),
 			Parent = AvatarFrame,
 		})
@@ -569,9 +570,9 @@ function Lib:CreateWindow(config)
 
 	-- The avatar badge background tracks the accent color (only visible
 	-- when the real thumbnail failed to load)
-	if not (ok and thumbnailContent) then
+	if FallbackBadge then
 		table.insert(Window._accentListeners, function(color)
-			tween(AvatarFrame, { BackgroundColor3 = color }, 0.2)
+			tween(FallbackBadge, { BackgroundColor3 = color }, 0.2)
 		end)
 	end
 
@@ -955,7 +956,7 @@ function Lib:AddTab(config)
 				Size = UDim2.new(1, 0, 0, 20),
 				Position = UDim2.fromOffset(0, 20),
 				BackgroundColor3 = Theme.SliderTrack,
-			BackgroundTransparency = Customization.Transparency.Input,
+				BackgroundTransparency = Customization.Transparency.Input,
 				Parent = Wrap,
 			}, { corner(6), stroke(Theme.PanelBorder, 1) })
 
@@ -1133,6 +1134,7 @@ function Lib:AddTab(config)
 				Size = UDim2.fromOffset(36, 18),
 				Position = UDim2.new(1, -36, 0.5, -9),
 				BackgroundColor3 = cfg.Default and Theme.Accent or Theme.SliderTrack,
+				BackgroundTransparency = Customization.Transparency.Input,
 				Parent = Wrap,
 			}, { corner(9), stroke(Theme.PanelBorder, 1) })
 
