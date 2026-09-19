@@ -964,9 +964,7 @@ function Lib:CreateWindow(options)
 		Parent = Footer,
 	})
 
-	local expirationTime = os.time() + (5 * 60 * 60)
-	local expirationDate = DateTime.fromUnixTimestamp(expirationTime):ToLocalTime()
-	local expirationText = expirationDate:FormatLocalTime("MM/DD/YYYY hh:mm A", "en-us")
+
 
 	local FooterTag = create("TextLabel", {
 		BackgroundColor3 = Theme.Panel,
