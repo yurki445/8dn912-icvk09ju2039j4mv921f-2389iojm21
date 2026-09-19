@@ -68,6 +68,13 @@ Lib.Presets = {
 function Lib:CreateWindow(config)
 	config = config or {}
 
+	if config.AccentColor then
+		Theme.Accent = config.AccentColor
+	end
+
+	local windowSize = config.Size or UDim2.fromOffset(860, 620)
+	local sidebarWidth = config.SidebarWidth or 220
+
 	local ScreenGui = create("ScreenGui", {
 		Name = "Lib",
 		ResetOnSpawn = false,
@@ -78,7 +85,7 @@ function Lib:CreateWindow(config)
 	local MainStroke = stroke(Theme.Accent, 1)
 	local MainFrame = create("Frame", {
 		Name = "Main",
-		Size = UDim2.fromOffset(860, 620),
+		Size = windowSize,
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Theme.Background,
@@ -88,7 +95,7 @@ function Lib:CreateWindow(config)
 	-- Sidebar ---------------------------------------------------------
 	local Sidebar = create("Frame", {
 		Name = "Sidebar",
-		Size = UDim2.new(0, 220, 1, 0),
+		Size = UDim2.new(0, sidebarWidth, 1, 0),
 		BackgroundTransparency = 1,
 		Parent = MainFrame,
 	})
@@ -219,8 +226,8 @@ function Lib:CreateWindow(config)
 	-- Content area ------------------------------------------------------
 	local ContentArea = create("Frame", {
 		Name = "Content",
-		Size = UDim2.new(1, -220, 1, 0),
-		Position = UDim2.fromOffset(220, 0),
+		Size = UDim2.new(1, -sidebarWidth, 1, 0),
+		Position = UDim2.fromOffset(sidebarWidth, 0),
 		BackgroundTransparency = 1,
 		Parent = MainFrame,
 	})
@@ -385,7 +392,22 @@ function Lib:AddTab(config)
 		Panels = {},
 	}
 
-	function Tab:AddPanel(title)
+	function Tab:AddPanel(titleOrConfig)
+		-- Accepts a plain string (title, with the usual checkbox header) or
+		-- a config table for more control:
+		--   Tab:AddPanel("Option")                              -- default, checkbox header
+		--   Tab:AddPanel({ Title = "Info", Toggleable = false }) -- title only, no checkbox
+		--   Tab:AddPanel({ Toggleable = false })                 -- no header at all, just a blank box
+		local cfg = titleOrConfig
+		if type(titleOrConfig) == "string" or titleOrConfig == nil then
+			cfg = { Title = titleOrConfig }
+		end
+		local title = cfg.Title
+		local toggleable = cfg.Toggleable
+		if toggleable == nil then
+			toggleable = true
+		end
+
 		local Panel = create("Frame", {
 			Size = UDim2.fromOffset(260, 40),
 			AutomaticSize = Enum.AutomaticSize.Y,
@@ -407,58 +429,78 @@ function Lib:AddTab(config)
 		})
 		Layout.Parent = Panel
 
-		-- Header row: checkbox + title
-		local HeaderRow = create("Frame", {
-			Size = UDim2.new(1, 0, 0, 18),
-			BackgroundTransparency = 1,
-			LayoutOrder = 0,
-			Parent = Panel,
-		})
+		local panelEnabled = true
 
-		local Checkbox = create("Frame", {
-			Size = UDim2.fromOffset(16, 16),
-			BackgroundColor3 = Theme.Panel,
-			Parent = HeaderRow,
-		}, { corner(4), stroke(Theme.SubText, 1) })
+		-- Header row: checkbox (optional) + title (optional). Skipped
+		-- entirely if there's no title and no checkbox wanted.
+		if title or toggleable then
+			local HeaderRow = create("Frame", {
+				Size = UDim2.new(1, 0, 0, 18),
+				BackgroundTransparency = 1,
+				LayoutOrder = 0,
+				Parent = Panel,
+			})
 
-		local Check = create("TextLabel", {
-			Text = "✓",
-			Font = Theme.FontBold,
-			TextSize = 12,
-			TextColor3 = Theme.Text,
-			BackgroundTransparency = 1,
-			Size = UDim2.fromScale(1, 1),
-			Visible = true,
-			Parent = Checkbox,
-		})
+			local titleOffset = 0
 
-		local enabled = true
-		local ToggleButton = create("TextButton", {
-			Size = UDim2.fromScale(1, 1),
-			BackgroundTransparency = 1,
-			Text = "",
-			Parent = Checkbox,
-		})
-		ToggleButton.MouseButton1Click:Connect(function()
-			enabled = not enabled
-			Check.Visible = enabled
-		end)
+			if toggleable then
+				local Checkbox = create("Frame", {
+					Size = UDim2.fromOffset(16, 16),
+					BackgroundColor3 = Theme.Panel,
+					Parent = HeaderRow,
+				}, { corner(4), stroke(Theme.SubText, 1) })
 
-		create("TextLabel", {
-			Text = title or "Option",
-			Font = Theme.FontBold,
-			TextSize = 14,
-			TextColor3 = Theme.Text,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			BackgroundTransparency = 1,
-			Position = UDim2.fromOffset(24, 0),
-			Size = UDim2.new(1, -24, 1, 0),
-			Parent = HeaderRow,
-		})
+				local Check = create("TextLabel", {
+					Text = "✓",
+					Font = Theme.FontBold,
+					TextSize = 12,
+					TextColor3 = Theme.Text,
+					BackgroundTransparency = 1,
+					Size = UDim2.fromScale(1, 1),
+					Visible = cfg.Default ~= false,
+					Parent = Checkbox,
+				})
+				panelEnabled = cfg.Default ~= false
+
+				local ToggleButton = create("TextButton", {
+					Size = UDim2.fromScale(1, 1),
+					BackgroundTransparency = 1,
+					Text = "",
+					Parent = Checkbox,
+				})
+				ToggleButton.MouseButton1Click:Connect(function()
+					panelEnabled = not panelEnabled
+					Check.Visible = panelEnabled
+					if cfg.Callback then
+						cfg.Callback(panelEnabled)
+					end
+				end)
+
+				titleOffset = 24
+			end
+
+			if title then
+				create("TextLabel", {
+					Text = title,
+					Font = Theme.FontBold,
+					TextSize = 14,
+					TextColor3 = Theme.Text,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BackgroundTransparency = 1,
+					Position = UDim2.fromOffset(titleOffset, 0),
+					Size = UDim2.new(1, -titleOffset, 1, 0),
+					Parent = HeaderRow,
+				})
+			end
+		end
 
 		local order = 1
 
 		local PanelObj = { Frame = Panel }
+
+		function PanelObj:IsEnabled()
+			return panelEnabled
+		end
 
 		function PanelObj:AddSlider(cfg)
 			cfg = cfg or {}
@@ -988,6 +1030,42 @@ function Lib:AddTab(config)
 
 			return Wrap
 		end
+
+		function PanelObj:AddLabel(cfg)
+			cfg = cfg or {}
+			order += 1
+
+			local Label = create("TextLabel", {
+				Text = cfg.Text or "",
+				Font = cfg.Bold and Theme.FontBold or Theme.Font,
+				TextSize = cfg.Size or 13,
+				TextColor3 = cfg.Color or (cfg.Muted and Theme.SubText or Theme.Text),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextWrapped = true,
+				BackgroundTransparency = 1,
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Size = UDim2.new(1, 0, 0, 0),
+				LayoutOrder = order,
+				Parent = Panel,
+			})
+
+			return Label
+		end
+
+		function PanelObj:AddDivider()
+			order += 1
+
+			local Line = create("Frame", {
+				Size = UDim2.new(1, 0, 0, 1),
+				BackgroundColor3 = Theme.PanelBorder,
+				BorderSizePixel = 0,
+				LayoutOrder = order,
+				Parent = Panel,
+			})
+
+			return Line
+		end
+
 		return PanelObj
 	end
 
