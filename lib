@@ -62,42 +62,95 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 -- Background = Color3.fromRGB(0, 0, 0)
 
 local Colors = {
+	-- Named colors used by the default Kelo palette.
 	Green       = Color3.fromRGB(0, 255, 0),
+	EerieBlack  = Color3.fromRGB(10, 12, 11),
+	RaisinBlack = Color3.fromRGB(18, 20, 19),
+	DarkGray    = Color3.fromRGB(40, 44, 42),
+	CharlestonGreen = Color3.fromRGB(24, 27, 26),
+	DarkSlateGray   = Color3.fromRGB(30, 34, 32),
+	DarkGreen   = Color3.fromRGB(0, 140, 0),
+	Gainsboro   = Color3.fromRGB(235, 235, 235),
+	SpanishGray = Color3.fromRGB(140, 145, 142),
+	Charcoal    = Color3.fromRGB(30, 33, 32),
+	DavyGray    = Color3.fromRGB(55, 58, 57),
+
+	-- Semantic aliases kept public so existing configs do not break.
 	Background  = Color3.fromRGB(10, 12, 11),
 	Panel       = Color3.fromRGB(18, 20, 19),
-	DarkGray = Color3.fromRGB(40, 44, 42),
-	CharlestonGreen = Color3.fromRGB(24, 27, 26),
-	DarkSlateGray = Color3.fromRGB(30, 34, 32),
 	Accent      = Color3.fromRGB(0, 255, 0),
 	AccentDim   = Color3.fromRGB(0, 140, 0),
 	Text        = Color3.fromRGB(235, 235, 235),
 	SubText     = Color3.fromRGB(140, 145, 142),
-	Charcoal = Color3.fromRGB(30, 33, 32),
 	SliderFill  = Color3.fromRGB(55, 58, 57),
 	Button      = Color3.fromRGB(30, 33, 32),
 	ButtonText  = Color3.fromRGB(235, 235, 235),
 	Checkbox    = Color3.fromRGB(18, 20, 19),
 	Graph       = Color3.fromRGB(55, 58, 57),
 	Avatar      = Color3.fromRGB(0, 255, 0),
+
+	-- Compatibility names from older builds.
+	ButtonGray = Color3.fromRGB(30, 33, 32),
+	ButtonGrayTextGray = Color3.fromRGB(235, 235, 235),
+	CheckboxBlack = Color3.fromRGB(18, 20, 19),
+	GraphGray = Color3.fromRGB(55, 58, 57),
+	AvatarGreen = Color3.fromRGB(0, 255, 0),
 }
+
+-- Lucide icons. These asset IDs are Roblox-hosted renditions of Lucide icons.
+-- Icon names match the names used on https://lucide.dev/icons/.
+local LucideIcons = {
+	home = "rbxassetid://10723407389",
+	eye = "rbxassetid://10723346959",
+	wrench = "rbxassetid://10747383470",
+	code = "rbxassetid://10709810463",
+	settings = "rbxassetid://10734950309",
+	settings2 = "rbxassetid://10734950020",
+	check = "rbxassetid://10709790644",
+	["check-square"] = "rbxassetid://10709790537",
+	["chevron-down"] = "rbxassetid://10709790948",
+	sliders = "rbxassetid://10734963400",
+	search = "rbxassetid://10734943674",
+	key = "rbxassetid://10723416652",
+	play = "rbxassetid://10734923549",
+	info = "rbxassetid://10723415903",
+	circle = "rbxassetid://10709798174",
+	x = "rbxassetid://10747384394",
+}
+
+local DefaultTabIcons = {
+	main = "home",
+	home = "home",
+	visual = "eye",
+	visuals = "eye",
+	tool = "wrench",
+	tools = "wrench",
+	custom = "code",
+	misc = "settings",
+	settings = "settings",
+}
+
+-- Full customization. Edit only this section to reskin the entire library.
 
 -- Full customization. Edit only this section to reskin the entire library.
 local Customization = {
 	Colors = {
 		Background = Colors.EerieBlack, Panel = Colors.RaisinBlack, Border = Colors.DarkGray,
 		Sidebar = Colors.CharlestonGreen, SidebarHover = Colors.DarkSlateGray,
-		Accent = Colors.Accent, AccentDim = Colors.DarkGreen, Text = Colors.Gainsboro, SubText = Colors.SpanishGray,
-		Button = Colors.ButtonGray, ButtonText = Colors.ButtonGrayTextGray, Input = Colors.Charcoal,
-		SliderTrack = Colors.Charcoal, SliderFill = Colors.DavyGray, Checkbox = Colors.CheckboxBlack, Graph = Colors.GraphGray, Avatar = Colors.AvatarGreen,
-		White = Color3.fromRGB(255,255,255), Black = Color3.fromRGB(0,0,0),
+		Accent = Colors.Green, AccentDim = Colors.DarkGreen, Text = Colors.Gainsboro, SubText = Colors.SpanishGray,
+		Button = Colors.Charcoal, ButtonText = Colors.Gainsboro, Input = Colors.Charcoal,
+		SliderTrack = Colors.Charcoal, SliderFill = Colors.DavyGray, Checkbox = Colors.RaisinBlack, Graph = Colors.DavyGray, Avatar = Colors.Green,
+		White = Color3.fromRGB(255,255,255), Black = Color3.fromRGB(0,0),
 	},
+
 	Transparency = {
 		Main = 0, Panel = 0, Sidebar = 0, Header = 0, Footer = 0, Button = 0, ButtonHover = 0,
 		Tab = 0, Input = 0, Slider = 0, SliderFill = 0, Checkbox = 0, Graph = 0, Border = 0,
 	},
 	Size = {
 		Window = UDim2.fromOffset(860,620), SidebarWidth = 220, HeaderHeight = 50, TabHeight = 44,
-		ButtonHeight = 32, InputHeight = 32, Padding = 14, Spacing = 12,
+		ButtonHeight = 32, InputHeight = 32, PanelWidth = 304, Padding = 14, Spacing = 12,
+		IconBox = 30, Icon = 16,
 	},
 	Corners = { Main = 14, Panel = 10, Button = 6, Input = 6, Tab = 8, Small = 4 },
 	TextSize = { Title = 18, Header = 14, Normal = 13, Small = 11, Button = 13, Label = 12 },
@@ -214,6 +267,50 @@ local function tween(obj, props, time, style)
 	TweenService:Create(obj, TweenInfo.new(time or 0.2, style or Enum.EasingStyle.Quad), props):Play()
 end
 
+local function resolveIcon(icon)
+	if icon == nil then
+		return nil
+	end
+
+	if type(icon) == "number" then
+		return "rbxassetid://" .. tostring(icon)
+	end
+
+	if type(icon) ~= "string" then
+		return nil
+	end
+
+	if string.sub(icon, 1, 8) == "lucide:" then
+		icon = string.sub(icon, 9)
+	end
+
+	if string.sub(icon, 1, 10) == "rbxassetid:" then
+		return icon
+	end
+
+	return LucideIcons[icon] or LucideIcons[string.lower(icon)]
+end
+
+local function createIcon(parent, icon, size, color, position, zIndex)
+	local image = resolveIcon(icon)
+	if not image then
+		return nil
+	end
+
+	return create("ImageLabel", {
+		Name = "Icon",
+		Image = image,
+		ImageColor3 = color or Theme.Text,
+		BackgroundTransparency = 1,
+		Size = UDim2.fromOffset(size or Customization.Size.Icon, size or Customization.Size.Icon),
+		Position = position or UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		ScaleType = Enum.ScaleType.Fit,
+		ZIndex = zIndex or 1,
+		Parent = parent,
+	})
+end
+
 --// LIBRARY ---------------------------------------------------------------
 
 local Lib = {}
@@ -232,6 +329,7 @@ Lib.Presets = {
 
 -- Public color table. You can change these before creating the window:
 Lib.Colors = Colors
+Lib.Icons = LucideIcons
 Lib.Customization = Customization
 Lib.Transparency = Customization.Transparency
 Lib.Style = Customization.Size
@@ -302,7 +400,7 @@ function Lib:CreateWindow(config)
 	})
 
 	local Header = create("Frame", {
-		Size = UDim2.new(1, 0, 0, 50),
+		Size = UDim2.new(1, 0, 0, Customization.Size.HeaderHeight),
 		BackgroundTransparency = 1,
 		Parent = Sidebar,
 	})
@@ -358,7 +456,7 @@ function Lib:CreateWindow(config)
 	-- internet access in some Studio/test contexts).
 	local AvatarFrame = create("Frame", {
 		Size = UDim2.fromOffset(28, 28),
-		BackgroundColor3 = Colors.AvatarGreen,
+		BackgroundColor3 = Colors.Avatar,
 		ClipsDescendants = true,
 		Parent = ProfileRow,
 	}, { corner(14) })
@@ -506,7 +604,7 @@ function Lib:CreateWindow(config)
 		local ResizeHandle = create("TextButton", {
 			Name = "ResizeHandle", Text = "", AutoButtonColor = false,
 			Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -22, 1, -22),
-			BackgroundTransparency = 1, BackgroundColor3 = Theme.Accent,
+			BackgroundTransparency = 0.55, BackgroundColor3 = Theme.Accent,
 			Active = true, ZIndex = 55, Parent = MainFrame,
 		}, { corner(5) })
 
@@ -556,6 +654,27 @@ function Lib:CreateWindow(config)
 		end
 	end
 
+	-- Change this window's accent color live.
+	function Window:SetAccentColor(colorOrPresetName)
+		local color = colorOrPresetName
+		if type(colorOrPresetName) == "string" then
+			color = Lib.Presets[colorOrPresetName]
+			if not color then
+				warn("Lib: unknown accent preset '" .. tostring(colorOrPresetName) .. "'")
+				return
+			end
+		end
+		if typeof(color) ~= "Color3" then
+			warn("Lib: SetAccentColor expects a Color3 or preset name.")
+			return
+		end
+
+		Theme.Accent = color
+		for _, listener in ipairs(self._accentListeners) do
+			listener(color)
+		end
+	end
+
 	-- Allows scripts to manually unload this window.
 	function Window:Destroy()
 		if self.ScreenGui and self.ScreenGui.Parent then
@@ -563,6 +682,7 @@ function Lib:CreateWindow(config)
 		end
 	end
 
+	Lib._lastWindow = Window
 	return Window
 end
 
@@ -575,14 +695,21 @@ function Lib:SetAccentColor(colorOrPresetName)
 	if type(colorOrPresetName) == "string" then
 		color = Lib.Presets[colorOrPresetName]
 		if not color then
-			warn("Lib: unknown accent preset '" .. colorOrPresetName .. "'")
+			warn("Lib: unknown accent preset '" .. tostring(colorOrPresetName) .. "'")
 			return
 		end
 	end
+	if typeof(color) ~= "Color3" then
+		warn("Lib: SetAccentColor expects a Color3 or preset name.")
+		return
+	end
 
+	-- Keep the color as the default for elements created afterward.
 	Theme.Accent = color
-	for _, listener in ipairs(self._accentListeners) do
-		listener(color)
+
+	-- If a window has been created, update that window too.
+	if Lib._lastWindow and Lib._lastWindow.SetAccentColor then
+		Lib._lastWindow:SetAccentColor(color)
 	end
 end
 
@@ -593,7 +720,7 @@ function Lib:AddTab(config)
 	local WindowRef = self -- keep a reference before nested methods shadow `self`
 
 	local Button = create("Frame", {
-		Size = UDim2.new(1, 0, 0, 44),
+		Size = UDim2.new(1, 0, 0, Customization.Size.TabHeight),
 		BackgroundColor3 = Theme.SidebarItem,
 		BackgroundTransparency = Customization.Transparency.Tab,
 		LayoutOrder = #self.Tabs + 1,
@@ -601,23 +728,19 @@ function Lib:AddTab(config)
 	}, { corner(8) })
 
 	local IconHolder = create("Frame", {
-		Size = UDim2.fromOffset(26, 26),
-		Position = UDim2.fromOffset(9, 9),
+		Size = UDim2.fromOffset(Customization.Size.IconBox, Customization.Size.IconBox),
+		Position = UDim2.fromOffset(9, 7),
 		BackgroundColor3 = Theme.SidebarHover,
+		BackgroundTransparency = Customization.Transparency.Tab,
 		Parent = Button,
 	}, { corner(6) })
 
-	if config.Icon then
-		create("ImageLabel", {
-			Image = config.Icon,
-			BackgroundTransparency = 1,
-			Size = UDim2.fromOffset(16, 16),
-			Position = UDim2.fromScale(0.5, 0.5),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ImageColor3 = Theme.Text,
-			Parent = IconHolder,
-		})
+	local tabName = tostring(config.Name or "Tab")
+	local iconName = config.Icon
+	if not iconName then
+		iconName = DefaultTabIcons[string.lower(tabName)]
 	end
+	createIcon(IconHolder, iconName, Customization.Size.Icon, Theme.Text, nil, 2)
 
 	create("TextLabel", {
 		Text = config.Name or "Tab",
@@ -692,7 +815,7 @@ function Lib:AddTab(config)
 		end
 
 		local Panel = create("Frame", {
-			Size = UDim2.fromOffset(260, 40),
+			Size = UDim2.fromOffset(Customization.Size.PanelWidth, 40),
 			AutomaticSize = Enum.AutomaticSize.Y,
 			BackgroundColor3 = Theme.Panel,
 			BackgroundTransparency = Customization.Transparency.Panel,
@@ -700,15 +823,15 @@ function Lib:AddTab(config)
 		}, { corner(Customization.Corners.Panel), stroke(Theme.PanelBorder, Customization.Stroke.Thickness) })
 
 		local Padding = create("UIPadding", {
-			PaddingTop = UDim.new(0, 14),
-			PaddingBottom = UDim.new(0, 14),
-			PaddingLeft = UDim.new(0, 14),
-			PaddingRight = UDim.new(0, 14),
+			PaddingTop = UDim.new(0, Customization.Size.Padding),
+			PaddingBottom = UDim.new(0, Customization.Size.Padding),
+			PaddingLeft = UDim.new(0, Customization.Size.Padding),
+			PaddingRight = UDim.new(0, Customization.Size.Padding),
 		})
 		Padding.Parent = Panel
 
 		local Layout = create("UIListLayout", {
-			Padding = UDim.new(0, 12),
+			Padding = UDim.new(0, Customization.Size.Spacing),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 		})
 		Layout.Parent = Panel
@@ -734,16 +857,10 @@ function Lib:AddTab(config)
 					Parent = HeaderRow,
 				}, { corner(4), stroke(Theme.SubText, 1) })
 
-				local Check = create("TextLabel", {
-					Text = "✓",
-					Font = Theme.FontBold,
-					TextSize = 12,
-					TextColor3 = Theme.Text,
-					BackgroundTransparency = 1,
-					Size = UDim2.fromScale(1, 1),
-					Visible = cfg.Default ~= false,
-					Parent = Checkbox,
-				})
+				local Check = createIcon(Checkbox, "check", 11, Theme.Text, UDim2.fromScale(0.5, 0.5), 2)
+				if Check then
+					Check.Visible = cfg.Default ~= false
+				end
 				panelEnabled = cfg.Default ~= false
 
 				local ToggleButton = create("TextButton", {
@@ -909,16 +1026,7 @@ function Lib:AddTab(config)
 				Parent = Box,
 			})
 
-			create("TextLabel", {
-				Text = "⌄",
-				Font = Theme.FontBold,
-				TextSize = 14,
-				TextColor3 = Theme.SubText,
-				BackgroundTransparency = 1,
-				Position = UDim2.new(1, -22, 0, 0),
-				Size = UDim2.fromOffset(16, 32),
-				Parent = Box,
-			})
+			createIcon(Box, "chevron-down", 14, Theme.SubText, UDim2.new(1, -14, 0.5, 0), 2)
 
 			local ListOpen = false
 			local OptionsList = create("Frame", {
@@ -1042,17 +1150,21 @@ function Lib:AddTab(config)
 			local hoverColor = cfg.Accent and Theme.AccentDim or Theme.SidebarHover
 
 			local Btn = create("TextButton", {
-				Text = cfg.Name or "Button",
+				Text = cfg.Icon and "      " .. (cfg.Name or "Button") or (cfg.Name or "Button"),
 				Font = Theme.FontBold,
 				TextSize = 13,
 				TextColor3 = cfg.Accent and Color3.fromRGB(10, 10, 10) or Theme.Text,
 				BackgroundColor3 = idleColor,
-			BackgroundTransparency = Customization.Transparency.Button,
-				Size = UDim2.new(1, 0, 0, 32),
+				BackgroundTransparency = Customization.Transparency.Button,
+				Size = UDim2.new(1, 0, 0, Customization.Size.ButtonHeight),
 				AutoButtonColor = false,
 				LayoutOrder = order,
 				Parent = Panel,
-			}, { corner(6), stroke(Theme.PanelBorder, 1) })
+			}, { corner(Customization.Corners.Button), stroke(Theme.PanelBorder, 1) })
+
+			if cfg.Icon then
+				createIcon(Btn, cfg.Icon, 15, cfg.Accent and Color3.fromRGB(10, 10, 10) or Theme.Text, UDim2.new(0, 16, 0.5, 0), 2)
+			end
 
 			if cfg.Accent then
 				table.insert(WindowRef._accentListeners, function(color)
@@ -1104,7 +1216,11 @@ function Lib:AddTab(config)
 				Position = UDim2.new(1, -80, 0, 0),
 				BackgroundColor3 = Theme.SliderTrack,
 				Parent = Wrap,
-			}, { corner(6), KeyStroke })
+			}, { corner(Customization.Corners.Small), KeyStroke })
+
+			if cfg.Icon then
+				createIcon(Wrap, cfg.Icon, 14, Theme.SubText, UDim2.new(1, -92, 0.5, 0), 2)
+			end
 
 			local currentKey = cfg.Default
 
