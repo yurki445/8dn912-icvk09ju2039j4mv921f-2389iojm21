@@ -506,7 +506,7 @@ function Lib:CreateWindow(config)
 		local ResizeHandle = create("TextButton", {
 			Name = "ResizeHandle", Text = "", AutoButtonColor = false,
 			Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -22, 1, -22),
-			BackgroundTransparency = 0.55, BackgroundColor3 = Theme.Accent,
+			BackgroundTransparency = 1, BackgroundColor3 = Theme.Accent,
 			Active = true, ZIndex = 55, Parent = MainFrame,
 		}, { corner(5) })
 
