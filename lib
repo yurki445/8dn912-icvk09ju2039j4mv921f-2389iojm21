@@ -361,6 +361,32 @@ function Lib:CreateWindow(config)
 		Theme.Accent = config.AccentColor
 	end
 
+	-- Optional per-window transparency override. Pass a number to apply it
+	-- to the main visible surfaces, or a table for individual values.
+	-- Roblox transparency: 0 = opaque, 1 = fully transparent.
+	if config.Transparency ~= nil then
+		if type(config.Transparency) == "number" then
+			local value = math.clamp(config.Transparency, 0, 1)
+			Customization.Transparency.Main = value
+			Customization.Transparency.Panel = value
+			Customization.Transparency.Footer = value
+			Customization.Transparency.Tab = value
+			Customization.Transparency.Button = value
+			Customization.Transparency.Input = value
+			Customization.Transparency.Slider = value
+			Customization.Transparency.SliderFill = value
+			Customization.Transparency.Checkbox = value
+			Customization.Transparency.Graph = value
+			Customization.Transparency.Border = value
+		elseif type(config.Transparency) == "table" then
+			for key, value in pairs(config.Transparency) do
+				if Customization.Transparency[key] ~= nil and type(value) == "number" then
+					Customization.Transparency[key] = math.clamp(value, 0, 1)
+				end
+			end
+		end
+	end
+
 	local windowSize = config.Size or Customization.Size.Window
 	local sidebarWidth = config.SidebarWidth or Customization.Size.SidebarWidth
 
