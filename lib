@@ -333,8 +333,8 @@ function Lib:CreateWindow(config)
 
 	-- Footer / profile --------------------------------------------------
 	local Footer = create("Frame", {
-		Size = UDim2.new(1, -24, 0, 60),
-		Position = UDim2.new(0, 12, 1, -70),
+		Size = UDim2.new(1, -24, 0, 76),
+		Position = UDim2.new(0, 12, 1, -86),
 		BackgroundTransparency = 1,
 		Parent = Sidebar,
 	})
@@ -393,26 +393,29 @@ function Lib:CreateWindow(config)
 		})
 	end
 
-	create("TextLabel", {
+	local ProfileNameLabel = create("TextLabel", {
 		Text = displayName,
 		Font = Theme.FontBold,
 		TextSize = 14,
 		TextColor3 = Theme.Text,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		BackgroundTransparency = 1,
 		Position = UDim2.fromOffset(36, 0),
-		Size = UDim2.fromOffset(100, 28),
+		Size = UDim2.new(1, -42, 0, 28),
 		Parent = ProfileRow,
 	})
 
-	create("TextLabel", {
+	local ProfileTagLabel = create("TextLabel", {
 		Text = config.ProfileTag or "",
 		Font = Theme.Font,
 		TextSize = 11,
 		TextColor3 = Theme.SubText,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		BackgroundColor3 = Theme.SidebarItem,
-		Position = UDim2.new(1, -78, 0, 3),
-		Size = UDim2.fromOffset(78, 22),
+		Position = UDim2.fromOffset(36, 27),
+		Size = UDim2.new(1, -42, 0, 22),
 		Parent = ProfileRow,
 	}, { corner(6) })
 
@@ -448,44 +451,89 @@ function Lib:CreateWindow(config)
 		end)
 	end
 
-	-- Make the window draggable with mouse or touch when enabled.
+	-- Drag the whole window from the header or any outer side/corner.
+	-- A bottom-right resize handle is also provided.
 	if Customization.Drag.Enabled then
 		local dragging = false
 		local dragStart = nil
 		local startPos = nil
+		local resizing = false
+		local resizeStart = nil
+		local startSize = nil
 
-		Header.InputBegan:Connect(function(input)
+		local DragLayer = create("Frame", {
+			Name = "DragLayer",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Active = false,
+			ZIndex = 50,
+			Parent = MainFrame,
+		})
+
+		local function beginDrag(input)
+			if dragging or resizing then return end
+			dragging = true
+			dragStart = input.Position
+			startPos = MainFrame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then dragging = false end
+			end)
+		end
+
+		local dragZones = {}
+		local function makeDragZone(name, size, position)
+			local zone = create("TextButton", {
+				Name = name, Text = "", AutoButtonColor = false,
+				Size = size, Position = position, BackgroundTransparency = 1,
+				Active = true, ZIndex = 51, Parent = DragLayer,
+			})
+			zone.InputBegan:Connect(function(input)
+				if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
+					or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
+					beginDrag(input)
+				end
+			end)
+			table.insert(dragZones, zone)
+			return zone
+		end
+
+		-- Header and all four sides can start a move.
+		makeDragZone("TopDrag", UDim2.new(1, -24, 0, 24), UDim2.fromOffset(12, 0))
+		makeDragZone("LeftDrag", UDim2.new(0, 12, 1, -24), UDim2.fromOffset(0, 12))
+		makeDragZone("RightDrag", UDim2.new(0, 12, 1, -24), UDim2.new(1, -12, 0, 12))
+		makeDragZone("BottomDrag", UDim2.new(1, -80, 0, 12), UDim2.new(0, 12, 1, -12))
+
+		local ResizeHandle = create("TextButton", {
+			Name = "ResizeHandle", Text = "", AutoButtonColor = false,
+			Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -22, 1, -22),
+			BackgroundTransparency = 0.55, BackgroundColor3 = Theme.Accent,
+			Active = true, ZIndex = 55, Parent = MainFrame,
+		}, { corner(5) })
+
+		ResizeHandle.InputBegan:Connect(function(input)
 			if (Customization.Drag.Mouse and input.UserInputType == Enum.UserInputType.MouseButton1)
 				or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
-
-				dragging = true
-				dragStart = input.Position
-				startPos = MainFrame.Position
-
+				resizing = true
+				resizeStart = input.Position
+				startSize = MainFrame.AbsoluteSize
 				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then
-						dragging = false
-					end
+					if input.UserInputState == Enum.UserInputState.End then resizing = false end
 				end)
 			end
 		end)
 
 		UserInputService.InputChanged:Connect(function(input)
-			if not dragging then
-				return
-			end
-
-			if input.UserInputType == Enum.UserInputType.MouseMovement
-				or (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then
-
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement
+				and not (Customization.Drag.Touch and input.UserInputType == Enum.UserInputType.Touch) then return end
+			if resizing then
+				local delta = input.Position - resizeStart
+				local minX, minY = 560, 420
+				local newX = math.max(minX, startSize.X + delta.X)
+				local newY = math.max(minY, startSize.Y + delta.Y)
+				MainFrame.Size = UDim2.fromOffset(newX, newY)
+			elseif dragging then
 				local delta = input.Position - dragStart
-
-				MainFrame.Position = UDim2.new(
-					startPos.X.Scale,
-					startPos.X.Offset + delta.X,
-					startPos.Y.Scale,
-					startPos.Y.Offset + delta.Y
-				)
+				MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 			end
 		end)
 	end
