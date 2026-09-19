@@ -567,64 +567,122 @@ end
 
 --// PANEL LAYOUT
 
+-- Panels are positioned manually instead of using UIGridLayout.  A grid layout
+-- cannot use each panel's automatic height, which is what caused panels with
+-- different amounts of content to overlap.
 local function setupPanelLayout(page)
-	local layout = page:FindFirstChild("PanelGrid")
+	local state = {
+		Connections = {},
+		Updating = false,
+	}
 
-	if layout then
-		layout:Destroy()
+	local function getPanels()
+		local panels = {}
+
+		for _, child in ipairs(page:GetChildren()) do
+			if child:IsA("GuiObject") and child.Name ~= "PagePadding" then
+				table.insert(panels, child)
+			end
+		end
+
+		table.sort(panels, function(a, b)
+			return (a.LayoutOrder or 0) < (b.LayoutOrder or 0)
+		end)
+
+		return panels
 	end
 
-	layout = create("UIGridLayout", {
-		Name = "PanelGrid",
-
-		CellSize = UDim2.fromOffset(
-			Customization.Size.PanelWidth,
-			40
-		),
-
-		CellPadding = UDim2.fromOffset(
-			Customization.Size.Spacing,
-			Customization.Size.Spacing
-		),
-
-		FillDirection = Enum.FillDirection.Horizontal,
-
-		FillDirectionMaxCells = 2,
-
-		HorizontalAlignment = Enum.HorizontalAlignment.Left,
-		VerticalAlignment = Enum.VerticalAlignment.Top,
-
-		SortOrder = Enum.SortOrder.LayoutOrder,
-
-		Parent = page,
-	})
-
 	local function update()
-		local width = page.AbsoluteSize.X
-
-		if width <= 0 then
+		if state.Updating or not page.Parent then
 			return
 		end
 
-		local panelWidth = Customization.Size.PanelWidth
+		state.Updating = true
 
-		if width < panelWidth * 2 + Customization.Size.Spacing then
-			layout.FillDirectionMaxCells = 1
-		else
-			layout.FillDirectionMaxCells = 2
+		local panels = getPanels()
+		local pageWidth = page.AbsoluteSize.X
+		local panelWidth = Customization.Size.PanelWidth
+		local spacing = Customization.Size.Spacing
+		local padding = Customization.Size.Padding
+
+		if pageWidth <= 0 then
+			state.Updating = false
+			return
 		end
 
-		layout.CellSize = UDim2.fromOffset(
-			panelWidth,
-			40
-		)
+		-- The page has its own 2px UIPadding. Work with the usable width so
+		-- two columns always fit without touching or overlapping.
+		local usableWidth = math.max(0, pageWidth - 4)
+		local columns = 1
+
+		if usableWidth >= (panelWidth * 2 + spacing) then
+			columns = 2
+		end
+
+		local rowY = 0
+		local rowHeight = 0
+
+		for index, panel in ipairs(panels) do
+			local column = (index - 1) % columns
+			local row = math.floor((index - 1) / columns)
+
+			if column == 0 then
+				rowY = row == 0 and 0 or (rowY + rowHeight + spacing)
+				rowHeight = 0
+			end
+
+			panel.Size = UDim2.fromOffset(panelWidth, math.max(40, panel.AbsoluteSize.Y))
+			panel.Position = UDim2.fromOffset(
+				column * (panelWidth + spacing),
+				rowY
+			)
+
+			rowHeight = math.max(rowHeight, panel.AbsoluteSize.Y)
+		end
+
+		local totalHeight = rowY + rowHeight + padding
+		page.CanvasSize = UDim2.fromOffset(0, math.max(0, totalHeight))
+
+		state.Updating = false
 	end
 
-	page:GetPropertyChangedSignal("AbsoluteSize"):Connect(update)
+	local function watchPanel(panel)
+		if not panel:IsA("GuiObject") then
+			return
+		end
 
-	update()
+		local connection = panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			task.defer(update)
+		end)
 
-	return layout
+		table.insert(state.Connections, connection)
+	end
+
+	page.ChildAdded:Connect(function(child)
+		if child:IsA("GuiObject") and child.Name ~= "PagePadding" then
+			watchPanel(child)
+			task.defer(update)
+		end
+	end)
+
+	page.ChildRemoved:Connect(function()
+		task.defer(update)
+	end)
+
+	page:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		task.defer(update)
+	end)
+
+	for _, child in ipairs(page:GetChildren()) do
+		if child:IsA("GuiObject") and child.Name ~= "PagePadding" then
+			watchPanel(child)
+		end
+	end
+
+	-- Give automatic panel sizing one frame to settle before the first layout.
+	task.defer(update)
+
+	return state
 end
 
 --// WINDOW
@@ -687,7 +745,11 @@ function Lib:CreateWindow(options)
 
 		BorderSizePixel = 0,
 
+		ClipsDescendants = true,
+
 		Parent = MainFrame,
+	}, {
+		corner(Customization.Corners.Main),
 	})
 
 	local Divider = create("Frame", {
@@ -848,33 +910,39 @@ function Lib:CreateWindow(options)
 		corner(Customization.Corners.Panel),
 	})
 
-	local FooterAvatar = create("Frame", {
+	local FooterAvatar = create("ImageLabel", {
+		Name = "FooterAvatar",
+
 		Size = UDim2.fromOffset(26, 26),
 
 		Position = UDim2.fromOffset(10, 14),
 
 		BackgroundColor3 = Theme.Accent,
 
+		BackgroundTransparency = 0,
+
+		Image = "",
+
+		ScaleType = Enum.ScaleType.Crop,
+
 		Parent = Footer,
 	}, {
 		corner(13),
 	})
 
-	local FooterInitial = create("TextLabel", {
-		BackgroundTransparency = 1,
+	task.spawn(function()
+		local success, image = pcall(function()
+			return Players:GetUserThumbnailAsync(
+				LocalPlayer.UserId,
+				Enum.ThumbnailType.HeadShot,
+				Enum.ThumbnailSize.Size100x100
+			)
+		end)
 
-		Size = UDim2.fromScale(1, 1),
-
-		Text = string.sub(ProfileName, 1, 1):upper(),
-
-		TextColor3 = Color3.fromRGB(255, 255, 255),
-
-		TextSize = 12,
-
-		Font = Theme.FontBold,
-
-		Parent = FooterAvatar,
-	})
+		if success and FooterAvatar.Parent then
+			FooterAvatar.Image = image
+		end
+	end)
 
 	local FooterName = create("TextLabel", {
 		BackgroundTransparency = 1,
@@ -896,14 +964,18 @@ function Lib:CreateWindow(options)
 		Parent = Footer,
 	})
 
+	local expirationTime = os.time() + (5 * 60 * 60)
+	local expirationDate = DateTime.fromUnixTimestamp(expirationTime):ToLocalTime()
+	local expirationText = expirationDate:FormatLocalTime("MM/DD/YYYY hh:mm A", "en-us")
+
 	local FooterTag = create("TextLabel", {
 		BackgroundColor3 = Theme.Panel,
 
-		Position = UDim2.new(1, -80, 0, 13),
+		Position = UDim2.new(1, -96, 0, 13),
 
-		Size = UDim2.fromOffset(72, 18),
+		Size = UDim2.fromOffset(88, 18),
 
-		Text = ProfileTag ~= "" and ProfileTag or "Ends: M.D.Y",
+		Text = ProfileTag ~= "" and ProfileTag or ("Ends: " .. expirationText),
 
 		TextColor3 = Theme.SubText,
 
@@ -931,7 +1003,11 @@ function Lib:CreateWindow(options)
 
 		BorderSizePixel = 0,
 
+		ClipsDescendants = true,
+
 		Parent = MainFrame,
+	}, {
+		corner(Customization.Corners.Main),
 	})
 
 	local WindowObject = {
@@ -1197,7 +1273,7 @@ function Lib:CreateWindow(options)
 
 			CanvasSize = UDim2.fromOffset(0, 0),
 
-			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			AutomaticCanvasSize = Enum.AutomaticSize.None,
 
 			ScrollingDirection = Enum.ScrollingDirection.Y,
 
