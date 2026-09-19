@@ -1,135 +1,225 @@
-# Kelo Tester UI
+Kelo UI
 
-A lightweight Roblox Luau UI library (`Lib.lua`) for building clean tester,
-settings, debug, and playtest dashboards. It includes tabs, panels, common
-controls, themes, customization, mouse/touch dragging, bottom-right resizing,
-and automatic cleanup of an older copy of the same UI.
+A lightweight Roblox Luau UI library (Lib.lua) for building clean tester,
+debug, settings, and playtest dashboards.
 
-## Files
+The default layout is built around:
 
-| File | Where it goes | Type |
-|---|---|---|
-| `Lib.lua` | `ReplicatedStorage` | ModuleScript |
-| `README.md` | Your project/repository | Documentation |
+a left sidebar with icon boxes
 
-A simple Roblox project can look like this:
+rounded tab buttons with subtitles
 
-```text
+two-column rounded panels
+
+checkbox-style panel headers
+
+Lucide-style icons
+
+sliders, dropdowns, toggles, buttons, textboxes, keybinds, and graphs
+
+mouse/touch dragging
+
+bottom-right resizing
+
+automatic duplicate-UI cleanup
+
+named themes and full customization
+
+The icon names follow the Lucide icon set from
+https://lucide.dev/icons/. The library uses Roblox-hosted Lucide renditions so
+the icons can be displayed by normal Roblox ImageLabel objects.
+
+Files
+
+File
+
+Where it goes
+
+Type
+
+Lib.lua
+
+ReplicatedStorage
+
+ModuleScript
+
+README.md
+
+Your project/repository
+
+Documentation
+
+Recommended Roblox structure:
+
 ReplicatedStorage/
-  Lib                 (ModuleScript, from Lib.lua)
+  Lib                  (ModuleScript, from Lib.lua)
 
 StarterPlayer/
   StarterPlayerScripts/
     Client             (LocalScript that requires Lib)
-```
 
-The library itself is client-side because it uses `Players.LocalPlayer` and
-`PlayerGui`.
+Lib.lua is client-side because it uses Players.LocalPlayer and
+PlayerGui.
 
-## Setup
+Setup
 
-1. **Create the `Lib` ModuleScript** inside `ReplicatedStorage`.
-2. Paste the contents of `Lib.lua` into that ModuleScript.
-3. Create a `LocalScript` in `StarterPlayerScripts`.
-4. Require the library:
+Create a ModuleScript named Lib inside ReplicatedStorage.
 
-   ```lua
-   local ReplicatedStorage = game:GetService("ReplicatedStorage")
-   local Lib = require(ReplicatedStorage:WaitForChild("Lib"))
-   ```
+Paste the contents of Lib.lua into it.
 
-5. Create a window, then add tabs, panels, and controls.
+Create a LocalScript inside StarterPlayerScripts.
 
-### Smallest working example
+Require the library:
 
-```lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lib = require(ReplicatedStorage:WaitForChild("Lib"))
+
+Create a window and add your tabs/panels.
+
+Smallest working example
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lib = require(ReplicatedStorage:WaitForChild("Lib"))
 
 local Window = Lib:CreateWindow({
-    Title = "Kelo Tester",
+    Title = "Kelo",
 })
 
-local Tab = Window:AddTab({
+local Main = Window:AddTab({
     Name = "Main",
-    Subtitle = "Tester settings",
+    Subtitle = "Most Popular",
+    Icon = "home",
 })
 
-local Panel = Tab:AddPanel("Options")
+local Panel = Main:AddPanel("Option")
 
-Panel:AddToggle({
-    Name = "Enabled",
-    Default = false,
-    Callback = function(value)
-        print("Enabled:", value)
-    end,
+Panel:AddSlider({
+    Name = "Amount",
+    Min = 0,
+    Max = 100,
+    Default = 65,
 })
-```
 
-## How it works
+Panel:AddDropdown({
+    Name = "Mode",
+    Options = { "Normal", "Debug", "Stress" },
+    Default = "Normal",
+})
 
-- `Lib:CreateWindow()` creates the main `ScreenGui` and window.
-- `Window:AddTab()` adds a page to the sidebar.
-- `Tab:AddPanel()` creates a container for related controls.
-- Panels can have an optional checkbox-style enable/disable header.
-- Controls are added directly to a panel with methods such as
-  `AddToggle`, `AddSlider`, `AddDropdown`, and `AddButton`.
-- The first tab you add becomes the active tab automatically.
-- The window can be dragged with mouse or touch input.
-- A bottom-right resize handle lets the user resize the window.
-- Creating another window with the same `GuiName` removes the old copy by
-default, preventing stacked duplicate UIs.
+Default layout
 
-## Creating the window
+The library is designed around the same general format as the example UI:
 
-```lua
+┌──────────────────────────────────────────────────────────────┐
+│  Kelo              │   ┌─────────────┐  ┌─────────────┐     │
+│                    │   │ □ Option    │  │ □ Option    │     │
+│  [icon] Main       │   │             │  │             │     │
+│  [icon] Visuals    │   │  slider     │  │  dropdown   │     │
+│  [icon] Tools      │   │  [========] │  │  [────────] │     │
+│  [icon] Custom     │   │             │  │             │     │
+│  [icon] Misc       │   └─────────────┘  └─────────────┘     │
+│                    │                                          │
+│  profile           │                                          │
+└──────────────────────────────────────────────────────────────┘
+
+Panels automatically wrap horizontally, so multiple panels can sit beside
+each other when there is enough room.
+
+The default panel width is 304 pixels and can be changed with:
+
+Lib.Customization.Size.PanelWidth = 304
+
+Creating the window
+
 local Window = Lib:CreateWindow({
-    Title = "Kelo Tester",
+    Title = "Kelo",
     ProfileName = "Player",
     ProfileTag = "v1.0",
-    Size = UDim2.fromOffset(700, 500),
-    SidebarWidth = 200,
-    AccentColor = Color3.fromRGB(70, 145, 235),
-    Theme = "Ocean",
+    Size = UDim2.fromOffset(860, 620),
+    SidebarWidth = 220,
+    AccentColor = Lib.Presets.Green,
+    Theme = "Default",
     GuiName = "Lib",
 })
-```
 
-### Window options
+Window options
 
-| Option | Type | Description |
-|---|---|---|
-| `Title` | string | Window title. Defaults to `Kelo`. |
-| `ProfileName` | string | Name shown in the profile area. Defaults to the local player's username. |
-| `ProfileTag` | string | Smaller profile text/tag. |
-| `Size` | UDim2 | Starting window size. Defaults to `860x620`. |
-| `SidebarWidth` | number | Width of the left sidebar. Defaults to `220`. |
-| `AccentColor` | Color3 | Starting accent color. |
-| `Theme` | string | Theme name from `Lib.Themes`. |
-| `GuiName` | string | Name of the generated `ScreenGui`. Defaults to `Lib`. |
+Option
 
-## Duplicate UI protection
+Type
 
-The library checks `PlayerGui` before creating a new window.
+Description
 
-By default:
+Title
 
-```lua
+string
+
+Main title. Defaults to Kelo.
+
+ProfileName
+
+string
+
+Name shown in the profile area. Defaults to the local player's username.
+
+ProfileTag
+
+string
+
+Small text/tag under the profile name.
+
+Size
+
+UDim2
+
+Starting window size. Defaults to 860x620.
+
+SidebarWidth
+
+number
+
+Left sidebar width. Defaults to 220.
+
+AccentColor
+
+Color3
+
+Starting accent color.
+
+Theme
+
+string
+
+Theme name from Lib.Themes.
+
+GuiName
+
+string
+
+Generated ScreenGui name. Defaults to Lib.
+
+Duplicate UI protection
+
+The library automatically removes an older UI with the same GuiName.
+
 Lib.Customization.Behavior.DestroyOldUI = true
-```
 
-So if this runs twice:
+This means running:
 
-```lua
-Lib:CreateWindow({ Title = "Kelo Tester" })
-Lib:CreateWindow({ Title = "Kelo Tester" })
-```
+Lib:CreateWindow({
+    Title = "Kelo",
+    GuiName = "Lib",
+})
 
-the second window removes the first one when both use the same `GuiName`.
+Lib:CreateWindow({
+    Title = "Kelo",
+    GuiName = "Lib",
+})
 
-If you want multiple independent UIs, give them different names:
+removes the first ScreenGui before creating the second one.
 
-```lua
+If you want multiple independent windows, give them different names:
+
 local MainUI = Lib:CreateWindow({
     Title = "Main",
     GuiName = "MainUI",
@@ -139,207 +229,251 @@ local DebugUI = Lib:CreateWindow({
     Title = "Debug",
     GuiName = "DebugUI",
 })
-```
 
-Or disable automatic cleanup:
+Or disable the behavior:
 
-```lua
 Lib.Customization.Behavior.DestroyOldUI = false
-```
 
-## Dragging and resizing
+Dragging
 
-The window supports both mouse and touch dragging.
+The entire window supports mouse and touch dragging.
 
-### Dragging
+The library has draggable areas around the outer edges, so you do not have to
+use only one tiny header area.
 
-Dragging can be enabled or disabled through:
-
-```lua
 Lib.Customization.Drag.Enabled = true
 Lib.Customization.Drag.Mouse = true
 Lib.Customization.Drag.Touch = true
-```
 
-The library provides outer drag areas around the window so the UI can be
-moved without depending on only one small header area.
+Resizing
 
-### Bottom-right resize
+A resize box is placed in the bottom-right corner of the window.
 
-The bottom-right resize box lets the user change the window size manually.
+Drag it to change the window size.
 
 The current minimum size is approximately:
 
-```text
 560 x 420
-```
 
 The starting size is controlled by:
 
-```lua
 Lib.Customization.Size.Window = UDim2.fromOffset(860, 620)
-```
 
-## Destroy / unload
+Unload / destroy
 
-You can manually unload a window with:
+Destroy the whole UI:
 
-```lua
 Window:Destroy()
-```
 
-This destroys the generated `ScreenGui`.
+Only hide it:
 
-If you only want to hide it without destroying it:
-
-```lua
 Window.MainFrame.Visible = false
-```
 
-Show it again with:
+Show it again:
 
-```lua
 Window.MainFrame.Visible = true
-```
 
-## Tabs
+Tabs
 
-Add a tab with:
+Add tabs with:
 
-```lua
-local Tab = Window:AddTab({
+local Main = Window:AddTab({
     Name = "Main",
     Subtitle = "Most Popular",
+    Icon = "home",
 })
-```
 
-### Tab options
+Tab options
 
-| Option | Type | Description |
-|---|---|---|
-| `Name` | string | Tab name. |
-| `Subtitle` | string | Smaller text shown under the tab name. |
-| `Icon` | string | Roblox image asset ID/string used as the tab icon. |
+Option
+
+Type
+
+Description
+
+Name
+
+string
+
+Tab title.
+
+Subtitle
+
+string
+
+Smaller text below the title.
+
+Icon
+
+string/number
+
+Lucide icon name, lucide:name, or Roblox asset ID.
+
+The first tab is selected automatically.
+
+Default tab icons
+
+If Icon is omitted, common tab names automatically receive an icon:
+
+Tab name
+
+Default Lucide icon
+
+Main / Home
+
+home
+
+Visual / Visuals
+
+eye
+
+Tool / Tools
+
+wrench
+
+Custom
+
+code
+
+Misc / Settings
+
+settings
 
 Example:
 
-```lua
-local CombatTab = Window:AddTab({
-    Name = "Combat",
-    Subtitle = "Combat settings",
-    Icon = "rbxassetid://123456789",
+Window:AddTab({
+    Name = "Visuals",
+    Subtitle = "Visual customization",
 })
-```
 
-The first tab added is selected automatically.
+This automatically uses the Lucide eye icon.
 
-The window also exposes:
+Icons
 
-```lua
-Window.Tabs
-Window.ActiveTab
-```
+The library uses Lucide icon names.
 
-`Window.Tabs` is the array of tabs in the order they were created.
+Browse the available icons at:
 
-## Panels
+https://lucide.dev/icons/
+
+Examples:
+
+Icon = "home"
+Icon = "eye"
+Icon = "wrench"
+Icon = "code"
+Icon = "settings"
+Icon = "sliders"
+Icon = "key"
+Icon = "search"
+Icon = "check"
+Icon = "chevron-down"
+
+You can also explicitly prefix an icon with lucide::
+
+Icon = "lucide:home"
+
+Or provide a Roblox asset ID:
+
+Icon = "rbxassetid://123456789"
+
+Or a numeric asset ID:
+
+Icon = 123456789
+
+The public icon map is available through:
+
+Lib.Icons
+
+Example:
+
+print(Lib.Icons.home)
+print(Lib.Icons.settings)
+
+The built-in icon assets are Roblox-hosted Lucide renditions, allowing them to
+work as normal Roblox image assets instead of trying to load an SVG directly
+from the Lucide website.
+
+Panels
 
 Panels group related controls together.
 
-### Default panel
+Normal panel
 
-```lua
-local Panel = Tab:AddPanel("Options")
-```
+local Panel = Main:AddPanel("Option")
 
-This creates a panel with a title and checkbox-style header.
+This creates the rounded box with a checkbox-style header shown in the example
+layout.
 
-### Title without a toggle
+Panel without a toggle
 
-```lua
-local Panel = Tab:AddPanel({
+local Panel = Main:AddPanel({
     Title = "Information",
     Toggleable = false,
 })
-```
 
-### Box with no header
+Empty panel
 
-```lua
-local Panel = Tab:AddPanel({
+local Panel = Main:AddPanel({
     Toggleable = false,
 })
-```
 
-### Panel callback/default state
+Panel default state and callback
 
-A toggleable panel can also use `Default` and `Callback`:
-
-```lua
-local Panel = Tab:AddPanel({
+local Panel = Main:AddPanel({
     Title = "Advanced",
     Default = true,
     Callback = function(enabled)
         print("Panel enabled:", enabled)
     end,
 })
-```
 
-You can check its current state with:
+Check its current state:
 
-```lua
 print(Panel:IsEnabled())
-```
 
-## Controls
+Controls
 
-All controls below are added to a panel.
+All controls are added directly to a panel.
 
-### Label
+Label
 
-```lua
 Panel:AddLabel({
     Text = "Section notes",
     Muted = true,
     Bold = false,
 })
-```
 
-### Divider
+Divider
 
-```lua
 Panel:AddDivider()
-```
 
-### Toggle
+Toggle
 
-```lua
 Panel:AddToggle({
     Name = "Enable thing",
     Default = false,
-    Callback = function(on)
-        print("Enabled:", on)
+    Callback = function(enabled)
+        print("Enabled:", enabled)
     end,
 })
-```
 
-### Slider
+Slider
 
-```lua
 Panel:AddSlider({
     Name = "Amount",
     Min = 0,
     Max = 100,
-    Default = 50,
+    Default = 65,
     Callback = function(value)
         print("Amount:", value)
     end,
 })
-```
 
-### Dropdown
+Dropdown
 
-```lua
+The dropdown uses a Lucide chevron-down icon.
+
 Panel:AddDropdown({
     Name = "Mode",
     Options = { "A", "B", "C" },
@@ -348,11 +482,9 @@ Panel:AddDropdown({
         print("Mode:", value)
     end,
 })
-```
 
-### Button
+Button
 
-```lua
 Panel:AddButton({
     Name = "Run test",
     Accent = true,
@@ -360,13 +492,22 @@ Panel:AddButton({
         print("Test started")
     end,
 })
-```
 
-`Accent = true` uses the current accent color for the button.
+Buttons can also have icons:
 
-### Textbox
+Panel:AddButton({
+    Name = "Run test",
+    Icon = "play",
+    Accent = true,
+    Callback = function()
+        print("Test started")
+    end,
+})
 
-```lua
+If the icon is not in the built-in map, pass a Roblox asset ID instead.
+
+Textbox
+
 Panel:AddTextbox({
     Name = "Tester note",
     Placeholder = "Type something...",
@@ -375,11 +516,9 @@ Panel:AddTextbox({
         print("Enter pressed:", enterPressed)
     end,
 })
-```
 
-### Keybind
+Keybind
 
-```lua
 Panel:AddKeybind({
     Name = "Open menu",
     Default = Enum.KeyCode.E,
@@ -390,14 +529,12 @@ Panel:AddKeybind({
         print("New key:", key.Name)
     end,
 })
-```
 
-Click the keybind box to listen for a new keyboard key. `Escape` cancels the
+Click the keybind box to listen for a new keyboard key. Escape cancels the
 new binding and keeps the previous key.
 
-### Graph
+Graph
 
-```lua
 local Graph = Panel:AddGraph({
     Name = "FPS",
     Points = 30,
@@ -406,25 +543,20 @@ local Graph = Panel:AddGraph({
 })
 
 Graph:Push(60)
-```
 
-Call `Graph:Push(value)` repeatedly to feed new values into the graph.
+Call Graph:Push(value) repeatedly to feed values into the graph.
 
-## Themes
+Themes
 
-The library includes named themes that can be selected when creating the
-window:
+Create a window with a named theme:
 
-```lua
 local Window = Lib:CreateWindow({
-    Title = "Kelo Tester",
+    Title = "Kelo",
     Theme = "Ocean",
 })
-```
 
 Available themes:
 
-```text
 Default
 Ocean
 AmberGlow
@@ -435,63 +567,84 @@ Bloom
 DarkBlue
 Crimson
 Monochrome
-```
 
-You can also change the theme after the window has been created:
+Change the theme later:
 
-```lua
 Window:SetTheme("Crimson")
-```
 
-The available theme definitions are exposed through:
+Theme definitions are exposed through:
 
-```lua
 Lib.Themes
-```
 
-## Accent colors
+Accent colors
 
-Built-in accent presets are exposed through `Lib.Presets`:
+Built-in accent presets:
 
-```lua
 Lib.Presets.Green
 Lib.Presets.Blue
 Lib.Presets.Purple
 Lib.Presets.Red
-```
 
-The starting accent can be set when creating a window:
+Set an accent when creating the window:
 
-```lua
 local Window = Lib:CreateWindow({
-    AccentColor = Lib.Presets.Blue,
+    AccentColor = Lib.Presets.Green,
 })
-```
 
-Or with a raw `Color3`:
+Change it after the window exists:
 
-```lua
-local Window = Lib:CreateWindow({
-    AccentColor = Color3.fromRGB(70, 145, 235),
-})
-```
+Window:SetAccentColor("Blue")
 
-## Full customization
+Or use a raw Color3:
 
-The library exposes its customization tables publicly:
+Window:SetAccentColor(Color3.fromRGB(70, 145, 235))
 
-```lua
+The library also supports:
+
+Lib:SetAccentColor("Blue")
+
+Colors
+
+The base colors are available through:
+
 Lib.Colors
+
+The default palette includes named colors such as:
+
+Lib.Colors.Green
+Lib.Colors.EerieBlack
+Lib.Colors.RaisinBlack
+Lib.Colors.DarkGray
+Lib.Colors.CharlestonGreen
+Lib.Colors.DarkSlateGray
+Lib.Colors.DarkGreen
+Lib.Colors.Gainsboro
+Lib.Colors.SpanishGray
+Lib.Colors.Charcoal
+Lib.Colors.DavyGray
+
+Example:
+
+Lib.Customization.Colors.Background =
+    Color3.fromRGB(10, 12, 11)
+
+Lib.Customization.Colors.Accent =
+    Color3.fromRGB(0, 255, 0)
+
+Full customization
+
+The public customization tables are:
+
+Lib.Colors
+Lib.Icons
 Lib.Customization
 Lib.Transparency
 Lib.Style
 Lib.Themes
 Lib.Presets
-```
 
-The main customization table is split into these sections:
+Lib.Customization contains:
 
-```text
 Colors
 Transparency
 Size
@@ -502,249 +655,222 @@ Stroke
 Animation
 Drag
 Behavior
-```
 
-### Colors
+Size
 
-Colors are exposed through `Lib.Colors`, and the customization table also
-contains color settings intended for the main parts of the UI.
-
-Example:
-
-```lua
-Lib.Customization.Colors.White = Color3.fromRGB(255, 255, 255)
-Lib.Customization.Colors.Black = Color3.fromRGB(0, 0, 0)
-```
-
-The library also exposes the base color table directly:
-
-```lua
-Lib.Colors
-```
-
-### Transparency
-
-```lua
-Lib.Customization.Transparency.Main = 0
-Lib.Customization.Transparency.Panel = 0
-Lib.Customization.Transparency.Button = 0
-Lib.Customization.Transparency.Tab = 0
-```
-
-Roblox transparency values use `0` for fully visible and `1` for fully
-transparent.
-
-### Sizes
-
-```lua
 Lib.Customization.Size.Window = UDim2.fromOffset(860, 620)
 Lib.Customization.Size.SidebarWidth = 220
 Lib.Customization.Size.HeaderHeight = 50
 Lib.Customization.Size.TabHeight = 44
+Lib.Customization.Size.PanelWidth = 304
+Lib.Customization.Size.IconBox = 30
+Lib.Customization.Size.Icon = 16
 Lib.Customization.Size.ButtonHeight = 32
 Lib.Customization.Size.InputHeight = 32
 Lib.Customization.Size.Padding = 14
 Lib.Customization.Size.Spacing = 12
-```
 
-`Lib.Style` is an alias for `Lib.Customization.Size`.
+Lib.Style is an alias for Lib.Customization.Size.
 
-### Corners
+Corners
 
-```lua
 Lib.Customization.Corners.Main = 14
 Lib.Customization.Corners.Panel = 10
 Lib.Customization.Corners.Button = 6
 Lib.Customization.Corners.Input = 6
 Lib.Customization.Corners.Tab = 8
 Lib.Customization.Corners.Small = 4
-```
 
-### Text sizes and fonts
+Transparency
 
-```lua
+Roblox uses:
+
+0 = fully visible
+1 = fully transparent
+
+Example:
+
+Lib.Customization.Transparency.Main = 0
+Lib.Customization.Transparency.Panel = 0
+Lib.Customization.Transparency.Button = 0
+Lib.Customization.Transparency.Tab = 0
+
+Text sizes
+
 Lib.Customization.TextSize.Title = 18
 Lib.Customization.TextSize.Header = 14
 Lib.Customization.TextSize.Normal = 13
 Lib.Customization.TextSize.Small = 11
+Lib.Customization.TextSize.Button = 13
+Lib.Customization.TextSize.Label = 12
+
+Fonts
 
 Lib.Customization.Fonts.Main = Enum.Font.GothamMedium
 Lib.Customization.Fonts.Bold = Enum.Font.GothamBold
 Lib.Customization.Fonts.Code = Enum.Font.Code
-```
 
-### Stroke
+Stroke
 
-```lua
 Lib.Customization.Stroke.Enabled = true
 Lib.Customization.Stroke.Thickness = 1
 Lib.Customization.Stroke.Transparency = 0
-```
 
-### Animation
+Animation
 
-```lua
 Lib.Customization.Animation.Enabled = true
 Lib.Customization.Animation.Speed = 0.15
 Lib.Customization.Animation.HoverSpeed = 0.12
-```
 
-### Behavior
+Drag
 
-```lua
+Lib.Customization.Drag.Enabled = true
+Lib.Customization.Drag.Mouse = true
+Lib.Customization.Drag.Touch = true
+
+Behavior
+
 Lib.Customization.Behavior.DestroyOldUI = true
 Lib.Customization.Behavior.CloseButton = true
 Lib.Customization.Behavior.AutoCenter = true
-```
 
-## Recommended project structure
+Complete example
 
-For a normal Roblox project, keep the library separate from the script that
-uses it:
-
-```text
-ReplicatedStorage/
-  Lib                         (ModuleScript)
-
-StarterPlayer/
-  StarterPlayerScripts/
-    TesterClient              (LocalScript)
-```
-
-Then your client script can stay focused on the actual tester/debug features,
-while `Lib.lua` remains reusable across different projects and dashboards.
-
-## Complete example
-
-```lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lib = require(ReplicatedStorage:WaitForChild("Lib"))
 
 local Window = Lib:CreateWindow({
-    Title = "Kelo Tester UI",
+    Title = "Kelo",
     ProfileName = "Tester",
     ProfileTag = "Playtest",
     Size = UDim2.fromOffset(860, 620),
     SidebarWidth = 220,
-    AccentColor = Lib.Presets.Blue,
-    Theme = "Ocean",
-    GuiName = "KeloTesterUI",
+    AccentColor = Lib.Presets.Green,
+    Theme = "Default",
+    GuiName = "KeloUI",
 })
 
-local MainTab = Window:AddTab({
+local Main = Window:AddTab({
     Name = "Main",
-    Subtitle = "Tester settings",
+    Subtitle = "Most Popular",
+    Icon = "home",
 })
 
-local Settings = MainTab:AddPanel({
-    Title = "Settings",
-    Default = true,
+local Visuals = Window:AddTab({
+    Name = "Visuals",
+    Subtitle = "Visual customization",
+    Icon = "eye",
 })
 
-Settings:AddLabel({
-    Text = "Use these controls to configure the current test.",
-    Muted = true,
+local Tools = Window:AddTab({
+    Name = "Tools",
+    Subtitle = "Useful tools",
+    Icon = "wrench",
 })
 
-Settings:AddDivider()
+local Panel = Main:AddPanel("Option")
 
-Settings:AddToggle({
-    Name = "Enable test mode",
-    Default = false,
-    Callback = function(enabled)
-        print("Test mode:", enabled)
-    end,
-})
-
-Settings:AddSlider({
-    Name = "Test amount",
+Panel:AddSlider({
+    Name = "Amount",
     Min = 0,
     Max = 100,
-    Default = 50,
+    Default = 65,
     Callback = function(value)
-        print("Test amount:", value)
+        print("Amount:", value)
     end,
 })
 
-Settings:AddDropdown({
+Panel:AddSlider({
+    Name = "Speed",
+    Min = 0,
+    Max = 100,
+    Default = 12,
+    Callback = function(value)
+        print("Speed:", value)
+    end,
+})
+
+Panel:AddDropdown({
     Name = "Mode",
     Options = { "Normal", "Debug", "Stress" },
     Default = "Normal",
-    Callback = function(mode)
-        print("Mode:", mode)
+    Callback = function(value)
+        print("Mode:", value)
     end,
 })
 
-Settings:AddButton({
+Panel:AddButton({
     Name = "Run test",
+    Icon = "play",
     Accent = true,
     Callback = function()
         print("Running test...")
     end,
 })
 
-local DebugTab = Window:AddTab({
-    Name = "Debug",
-    Subtitle = "Live information",
+local TogglePanel = Visuals:AddPanel({
+    Title = "Visuals",
+    Default = true,
 })
 
-local GraphPanel = DebugTab:AddPanel({
-    Title = "Performance",
-    Toggleable = false,
+TogglePanel:AddToggle({
+    Name = "Enable visuals",
+    Default = true,
+    Callback = function(enabled)
+        print("Visuals:", enabled)
+    end,
 })
 
-local FPSGraph = GraphPanel:AddGraph({
-    Name = "FPS",
-    Points = 30,
-    Min = 0,
-    Suffix = " fps",
-})
-
-FPSGraph:Push(60)
-
--- Change the theme later if needed:
+-- Change the theme later:
 -- Window:SetTheme("Crimson")
 
--- Unload the UI manually if needed:
+-- Change the accent later:
+-- Window:SetAccentColor("Blue")
+
+-- Hide the UI:
+-- Window.MainFrame.Visible = false
+
+-- Completely unload the UI:
 -- Window:Destroy()
-```
 
-## API reference
+API reference
 
-### Library
+Library
 
-```lua
 Lib:CreateWindow(config)
+
 Lib:SetAccentColor(colorOrPresetName)
+
 Lib.Colors
+Lib.Icons
 Lib.Presets
 Lib.Themes
 Lib.Customization
 Lib.Transparency
 Lib.Style
-```
 
-### Window
+Window
 
-```lua
 Window:AddTab(config)
+
 Window:SetTheme(themeName)
+
+Window:SetAccentColor(colorOrPresetName)
+
 Window:Destroy()
+
 Window.MainFrame
 Window.Tabs
 Window.ActiveTab
-```
 
-### Tab
+Tab
 
-```lua
 Tab:AddPanel(titleOrConfig)
-```
 
-### Panel
+Panel
 
-```lua
 Panel:IsEnabled()
+
 Panel:AddLabel(config)
 Panel:AddDivider()
 Panel:AddToggle(config)
@@ -754,20 +880,33 @@ Panel:AddButton(config)
 Panel:AddTextbox(config)
 Panel:AddKeybind(config)
 Panel:AddGraph(config)
-```
 
-## Notes
+Notes
 
-- `Lib.lua` is a ModuleScript and should be required from a client-side
-  LocalScript.
-- The default `GuiName` is `Lib`.
-- If `DestroyOldUI` is enabled, a new window with the same `GuiName` removes
-  the previous one first.
-- The bottom-right resize handle currently enforces a minimum size of about
-  `560x420`.
-- Mouse and touch dragging can be controlled independently.
-- `Window:Destroy()` removes the generated `ScreenGui` completely.
-- `Window.MainFrame.Visible = false` only hides the UI; it does not unload it.
-- The first created tab is selected automatically.
-- Use `Lib.Themes` and `Lib.Presets` when you want to inspect the available
-  built-in theme/accent definitions from your own script.
+Lib.lua is a ModuleScript and should be required from a client-side
+LocalScript.
+
+The default generated ScreenGui name is Lib.
+
+DestroyOldUI removes the previous UI before creating a new one with the
+same GuiName.
+
+The first tab created is selected automatically.
+
+Tabs use Lucide-style icon boxes.
+
+Common tab names receive default Lucide icons automatically.
+
+The dropdown arrow and panel check mark also use Lucide icons.
+
+Window:Destroy() removes the generated ScreenGui.
+
+Window.MainFrame.Visible = false only hides the UI.
+
+The bottom-right resize handle currently enforces a minimum size of about
+560x420.
+
+Mouse and touch dragging can be controlled independently.
+
+The icon names are based on the Lucide icon set at
+https://lucide.dev/icons/.
