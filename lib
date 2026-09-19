@@ -65,14 +65,14 @@ local Colors = {
 	Green       = Color3.fromRGB(0, 255, 0),
 	Background  = Color3.fromRGB(10, 12, 11),
 	Panel       = Color3.fromRGB(18, 20, 19),
-	PanelBorder = Color3.fromRGB(40, 44, 42),
-	SidebarItem = Color3.fromRGB(24, 27, 26),
-	SidebarHover= Color3.fromRGB(30, 34, 32),
+	DarkGray = Color3.fromRGB(40, 44, 42),
+	CharlestonGreen = Color3.fromRGB(24, 27, 26),
+	DarkSlateGray = Color3.fromRGB(30, 34, 32),
 	Accent      = Color3.fromRGB(0, 255, 0),
 	AccentDim   = Color3.fromRGB(0, 140, 0),
 	Text        = Color3.fromRGB(235, 235, 235),
 	SubText     = Color3.fromRGB(140, 145, 142),
-	SliderTrack = Color3.fromRGB(30, 33, 32),
+	Charcoal = Color3.fromRGB(30, 33, 32),
 	SliderFill  = Color3.fromRGB(55, 58, 57),
 	Button      = Color3.fromRGB(30, 33, 32),
 	ButtonText  = Color3.fromRGB(235, 235, 235),
@@ -84,11 +84,11 @@ local Colors = {
 -- Full customization. Edit only this section to reskin the entire library.
 local Customization = {
 	Colors = {
-		Background = Colors.Background, Panel = Colors.Panel, Border = Colors.PanelBorder,
-		Sidebar = Colors.SidebarItem, SidebarHover = Colors.SidebarHover,
-		Accent = Colors.Accent, AccentDim = Colors.AccentDim, Text = Colors.Text, SubText = Colors.SubText,
-		Button = Colors.Button, ButtonText = Colors.ButtonText, Input = Colors.SliderTrack,
-		SliderTrack = Colors.SliderTrack, SliderFill = Colors.SliderFill, Checkbox = Colors.Checkbox, Graph = Colors.Graph, Avatar = Colors.Avatar,
+		Background = Colors.EerieBlack, Panel = Colors.RaisinBlack, Border = Colors.DarkGray,
+		Sidebar = Colors.CharlestonGreen, SidebarHover = Colors.DarkSlateGray,
+		Accent = Colors.Accent, AccentDim = Colors.DarkGreen, Text = Colors.Gainsboro, SubText = Colors.SpanishGray,
+		Button = Colors.ButtonGray, ButtonText = Colors.ButtonGrayTextGray, Input = Colors.Charcoal,
+		SliderTrack = Colors.Charcoal, SliderFill = Colors.DavyGray, Checkbox = Colors.CheckboxBlack, Graph = Colors.GraphGray, Avatar = Colors.AvatarGreen,
 		White = Color3.fromRGB(255,255,255), Black = Color3.fromRGB(0,0,0),
 	},
 	Transparency = {
@@ -167,8 +167,8 @@ local Themes = {
 }
 
 local Theme = {
-	Background=Colors.Background, Panel=Colors.Panel, PanelBorder=Colors.PanelBorder, SidebarItem=Colors.SidebarItem, SidebarHover=Colors.SidebarHover,
-	Accent=Colors.Accent, AccentDim=Colors.AccentDim, Text=Colors.Text, SubText=Colors.SubText, SliderTrack=Colors.SliderTrack, SliderFill=Colors.SliderFill,
+	Background=Colors.EerieBlack, Panel=Colors.RaisinBlack, PanelBorder=Colors.DarkGray, SidebarItem=Colors.CharlestonGreen, SidebarHover=Colors.DarkSlateGray,
+	Accent=Colors.Accent, AccentDim=Colors.DarkGreen, Text=Colors.Gainsboro, SubText=Colors.SpanishGray, SliderTrack=Colors.Charcoal, SliderFill=Colors.DavyGray,
 	Font=Customization.Fonts.Main, FontBold=Customization.Fonts.Bold,
 }
 
@@ -358,7 +358,7 @@ function Lib:CreateWindow(config)
 	-- internet access in some Studio/test contexts).
 	local AvatarFrame = create("Frame", {
 		Size = UDim2.fromOffset(28, 28),
-		BackgroundColor3 = Colors.Avatar,
+		BackgroundColor3 = Colors.AvatarGreen,
 		ClipsDescendants = true,
 		Parent = ProfileRow,
 	}, { corner(14) })
@@ -1038,7 +1038,7 @@ function Lib:AddTab(config)
 			cfg = cfg or {}
 			order += 1
 
-			local idleColor = cfg.Accent and Theme.Accent or Colors.Button
+			local idleColor = cfg.Accent and Theme.Accent or Colors.ButtonGray
 			local hoverColor = cfg.Accent and Theme.AccentDim or Theme.SidebarHover
 
 			local Btn = create("TextButton", {
@@ -1166,7 +1166,7 @@ function Lib:AddTab(config)
 
 			local pointCount = cfg.Points or 30
 			local fixedMin, fixedMax = cfg.Min, cfg.Max
-			local barColor = cfg.Color or Colors.Graph
+			local barColor = cfg.Color or Colors.GraphGray
 
 			local Wrap = create("Frame", {
 				Size = UDim2.new(1, 0, 0, cfg.Height and (cfg.Height + 22) or 82),
