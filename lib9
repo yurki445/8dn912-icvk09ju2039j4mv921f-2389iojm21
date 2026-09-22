@@ -628,7 +628,7 @@ function Library:CreateWindow(options)
             TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
             {
                 Size = UDim2.fromOffset(
-                    MainFrame.AbsoluteSize.X,
+                    135, -- Set width to 135 when minimized
                     45
                 )
             }
