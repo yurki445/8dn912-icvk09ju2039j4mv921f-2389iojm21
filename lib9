@@ -359,6 +359,11 @@ local function ResolveUserInputType(value)
     end
 
     local inputName = string.gsub(value, "%s+", "")
+    local mouseNumber = string.match(string.upper(inputName), "^M([1-5])$")
+
+    if mouseNumber then
+        return Enum.UserInputType["MouseButton" .. mouseNumber]
+    end
 
     for _, inputType in ipairs(Enum.UserInputType:GetEnumItems()) do
         if string.lower(inputType.Name) == string.lower(inputName) then
@@ -431,6 +436,7 @@ function Library:CreateWindow(options)
 
     Window.Title = options.Title or "Library"
     Window.Version = options.Version or Library.Version
+    Window.CloseKeybind = tostring(options.CloseKeybind or "M5")
 
     ----------------------------------------------------------------
     -- SCREEN GUI
@@ -743,6 +749,45 @@ function Library:CreateWindow(options)
 
     Close.MouseButton1Click:Connect(function()
         Window:Close()
+    end)
+
+    local CloseKeybindBox = Create("TextBox", {
+        Name = "CloseKeybind",
+
+        Size = UDim2.fromOffset(41, 25),
+        Position = UDim2.new(1, -116, 0, 0),
+
+        BackgroundColor3 = Library.Theme.Element,
+        BackgroundTransparency = 0.4,
+
+        Text = Window.CloseKeybind,
+        PlaceholderText = "Close",
+        PlaceholderColor3 = Library.Theme.SubText,
+
+        TextColor3 = Library.Theme.Text,
+
+        Font = Enum.Font.SourceSans,
+        TextSize = 13,
+        TextXAlignment = Enum.TextXAlignment.Center,
+
+        ClearTextOnFocus = false,
+        TextEditable = true,
+
+        BorderSizePixel = 0,
+
+        Parent = MainFrame,
+    })
+
+    Corner(CloseKeybindBox, 8)
+
+    CloseKeybindBox.FocusLost:Connect(function()
+        if ResolveKeyCode(CloseKeybindBox.Text)
+            or ResolveUserInputType(CloseKeybindBox.Text) then
+
+            Window.CloseKeybind = CloseKeybindBox.Text
+        else
+            CloseKeybindBox.Text = Window.CloseKeybind
+        end
     end)
 
     ----------------------------------------------------------------
@@ -1585,7 +1630,10 @@ function Library:CreateWindow(options)
                     Box.InputBegan:Connect(function(input)
                         if input.UserInputType == Enum.UserInputType.Keyboard
                             or input.UserInputType == Enum.UserInputType.MouseButton1
-                            or input.UserInputType == Enum.UserInputType.MouseButton2 then
+                            or input.UserInputType == Enum.UserInputType.MouseButton2
+                            or input.UserInputType == Enum.UserInputType.MouseButton3
+                            or input.UserInputType == Enum.UserInputType.MouseButton4
+                            or input.UserInputType == Enum.UserInputType.MouseButton5 then
 
                             Box.Text = input.KeyCode ~= Enum.KeyCode.Unknown
                                 and input.KeyCode.Name
@@ -2128,7 +2176,9 @@ function Library:CreateWindow(options)
             return
         end
 
-        if MatchesKeybind(input, Library.Options.Keybind) then
+        if MatchesKeybind(input, Window.CloseKeybind) then
+            Window:Close()
+        elseif MatchesKeybind(input, Library.Options.Keybind) then
             if ScreenGui then
                 ScreenGui.Enabled = not ScreenGui.Enabled
             end
