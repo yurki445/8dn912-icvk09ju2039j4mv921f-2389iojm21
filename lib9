@@ -331,10 +331,53 @@ local function ResolveKeyCode(value)
     end
 
     if type(value) == "string" and value ~= "" then
-        return Enum.KeyCode[value]
+        local keyName = string.gsub(value, "%s+", "")
+        local directMatch = Enum.KeyCode[keyName]
+
+        if directMatch then
+            return directMatch
+        end
+
+        for _, keyCode in ipairs(Enum.KeyCode:GetEnumItems()) do
+            if string.lower(keyCode.Name) == string.lower(keyName) then
+                return keyCode
+            end
+        end
     end
 
     return nil
+end
+
+local function ResolveUserInputType(value)
+    if typeof(value) == "EnumItem"
+        and value.EnumType == Enum.UserInputType then
+        return value
+    end
+
+    if type(value) ~= "string" then
+        return nil
+    end
+
+    local inputName = string.gsub(value, "%s+", "")
+
+    for _, inputType in ipairs(Enum.UserInputType:GetEnumItems()) do
+        if string.lower(inputType.Name) == string.lower(inputName) then
+            return inputType
+        end
+    end
+
+    return nil
+end
+
+local function MatchesKeybind(input, keybind)
+    local keyCode = ResolveKeyCode(keybind)
+
+    if keyCode then
+        return input.KeyCode == keyCode
+    end
+
+    local inputType = ResolveUserInputType(keybind)
+    return inputType ~= nil and input.UserInputType == inputType
 end
 
 local function BindKeybind(keybind, callback)
@@ -347,9 +390,7 @@ local function BindKeybind(keybind, callback)
             return
         end
 
-        if input.UserInputType == Enum.UserInputType.Keyboard
-            and input.KeyCode == ResolveKeyCode(keybind) then
-
+        if MatchesKeybind(input, keybind) then
             callback()
         end
     end)
@@ -824,7 +865,9 @@ function Library:CreateWindow(options)
     end
 
     function Window:SetKeybind(key)
-        Library.Options.Keybind = ResolveKeyCode(key) or Library.Options.Keybind
+        if ResolveKeyCode(key) or ResolveUserInputType(key) then
+            Library.Options.Keybind = key
+        end
     end
 
     ----------------------------------------------------------------
@@ -1511,6 +1554,7 @@ function Library:CreateWindow(options)
                     TextSize = 14,
 
                     ClearTextOnFocus = false,
+                    TextEditable = true,
 
                     Parent = Elements,
                 })
@@ -1537,6 +1581,21 @@ function Library:CreateWindow(options)
                     end
                 end)
 
+                if options.CaptureKeybind then
+                    Box.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.Keyboard
+                            or input.UserInputType == Enum.UserInputType.MouseButton1
+                            or input.UserInputType == Enum.UserInputType.MouseButton2 then
+
+                            Box.Text = input.KeyCode ~= Enum.KeyCode.Unknown
+                                and input.KeyCode.Name
+                                or input.UserInputType.Name
+                            Textbox.Text = Box.Text
+                            Box:ReleaseFocus()
+                        end
+                    end)
+                end
+
                 function Textbox:Set(value)
                     Box.Text = tostring(value)
                     Textbox.Text = Box.Text
@@ -1547,7 +1606,7 @@ function Library:CreateWindow(options)
                 end
 
                 function Textbox:Get()
-                    return Textbox.Text
+                    return Box.Text
                 end
 
                 Textbox.Text = Box.Text
@@ -2069,7 +2128,7 @@ function Library:CreateWindow(options)
             return
         end
 
-        if input.KeyCode == Library.Options.Keybind then
+        if MatchesKeybind(input, Library.Options.Keybind) then
             if ScreenGui then
                 ScreenGui.Enabled = not ScreenGui.Enabled
             end
@@ -2099,7 +2158,9 @@ function Library:GetWindow()
 end
 
 function Library:SetKeybind(key)
-    Library.Options.Keybind = ResolveKeyCode(key) or Library.Options.Keybind
+    if ResolveKeyCode(key) or ResolveUserInputType(key) then
+        Library.Options.Keybind = key
+    end
 end
 
 function Library:GetFlag(flag)
