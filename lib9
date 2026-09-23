@@ -56,23 +56,6 @@ Library.Themes = {
         Input = Color3.fromRGB(56, 45, 30),
     },
 
-    Light = {
-        Background = Color3.fromRGB(235, 237, 235),
-        Secondary = Color3.fromRGB(245, 246, 245),
-        Element = Color3.fromRGB(225, 228, 225),
-
-        Text = Color3.fromRGB(25, 27, 25),
-        SubText = Color3.fromRGB(90, 95, 90),
-
-        Accent = Color3.fromRGB(70, 145, 90),
-        AccentDark = Color3.fromRGB(50, 110, 65),
-
-        Stroke = Color3.fromRGB(40, 40, 40),
-
-        Notification = Color3.fromRGB(245, 246, 245),
-        Input = Color3.fromRGB(215, 218, 215),
-    },
-
     Amethyst = {
         Background = Color3.fromRGB(20, 16, 28),
         Secondary = Color3.fromRGB(27, 21, 38),
