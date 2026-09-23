@@ -11,6 +11,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -21,6 +22,142 @@ local LocalPlayer = Players.LocalPlayer
 Library.Version = "0.0.1"
 
 Library.Themes = {
+	Ocean = {
+        Background = Color3.fromRGB(14, 22, 32),
+        Secondary = Color3.fromRGB(19, 29, 42),
+        Element = Color3.fromRGB(26, 39, 56),
+
+        Text = Color3.fromRGB(235, 242, 250),
+        SubText = Color3.fromRGB(140, 160, 180),
+
+        Accent = Color3.fromRGB(0, 162, 232),
+        AccentDark = Color3.fromRGB(0, 110, 160),
+
+        Stroke = Color3.fromRGB(180, 225, 255),
+
+        Notification = Color3.fromRGB(19, 29, 42),
+        Input = Color3.fromRGB(35, 52, 74),
+    },
+
+    AmberGlow = {
+        Background = Color3.fromRGB(24, 20, 15),
+        Secondary = Color3.fromRGB(32, 26, 18),
+        Element = Color3.fromRGB(44, 36, 24),
+
+        Text = Color3.fromRGB(245, 240, 230),
+        SubText = Color3.fromRGB(175, 155, 130),
+
+        Accent = Color3.fromRGB(235, 150, 40),
+        AccentDark = Color3.fromRGB(175, 105, 20),
+
+        Stroke = Color3.fromRGB(255, 210, 150),
+
+        Notification = Color3.fromRGB(32, 26, 18),
+        Input = Color3.fromRGB(56, 45, 30),
+    },
+
+    Light = {
+        Background = Color3.fromRGB(235, 237, 235),
+        Secondary = Color3.fromRGB(245, 246, 245),
+        Element = Color3.fromRGB(225, 228, 225),
+
+        Text = Color3.fromRGB(25, 27, 25),
+        SubText = Color3.fromRGB(90, 95, 90),
+
+        Accent = Color3.fromRGB(70, 145, 90),
+        AccentDark = Color3.fromRGB(50, 110, 65),
+
+        Stroke = Color3.fromRGB(40, 40, 40),
+
+        Notification = Color3.fromRGB(245, 246, 245),
+        Input = Color3.fromRGB(215, 218, 215),
+    },
+
+    Amethyst = {
+        Background = Color3.fromRGB(20, 16, 28),
+        Secondary = Color3.fromRGB(27, 21, 38),
+        Element = Color3.fromRGB(38, 29, 54),
+
+        Text = Color3.fromRGB(242, 238, 248),
+        SubText = Color3.fromRGB(160, 145, 180),
+
+        Accent = Color3.fromRGB(155, 85, 225),
+        AccentDark = Color3.fromRGB(110, 55, 165),
+
+        Stroke = Color3.fromRGB(210, 175, 255),
+
+        Notification = Color3.fromRGB(27, 21, 38),
+        Input = Color3.fromRGB(48, 36, 68),
+    },
+
+    Green = {
+        Background = Color3.fromRGB(16, 24, 18),
+        Secondary = Color3.fromRGB(21, 32, 24),
+        Element = Color3.fromRGB(30, 45, 34),
+
+        Text = Color3.fromRGB(235, 245, 238),
+        SubText = Color3.fromRGB(140, 170, 148),
+
+        Accent = Color3.fromRGB(46, 204, 113),
+        AccentDark = Color3.fromRGB(30, 145, 80),
+
+        Stroke = Color3.fromRGB(160, 240, 185),
+
+        Notification = Color3.fromRGB(21, 32, 24),
+        Input = Color3.fromRGB(40, 60, 45),
+    },
+
+    Bloom = {
+        Background = Color3.fromRGB(26, 18, 24),
+        Secondary = Color3.fromRGB(35, 23, 31),
+        Element = Color3.fromRGB(48, 31, 42),
+
+        Text = Color3.fromRGB(250, 238, 245),
+        SubText = Color3.fromRGB(180, 145, 168),
+
+        Accent = Color3.fromRGB(240, 110, 170),
+        AccentDark = Color3.fromRGB(175, 70, 120),
+
+        Stroke = Color3.fromRGB(255, 185, 215),
+
+        Notification = Color3.fromRGB(35, 23, 31),
+        Input = Color3.fromRGB(62, 40, 54),
+    },
+
+    DarkBlue = {
+        Background = Color3.fromRGB(10, 14, 23),
+        Secondary = Color3.fromRGB(15, 20, 32),
+        Element = Color3.fromRGB(22, 30, 48),
+
+        Text = Color3.fromRGB(230, 238, 248),
+        SubText = Color3.fromRGB(125, 145, 175),
+
+        Accent = Color3.fromRGB(45, 110, 230),
+        AccentDark = Color3.fromRGB(28, 75, 165),
+
+        Stroke = Color3.fromRGB(140, 180, 255),
+
+        Notification = Color3.fromRGB(15, 20, 32),
+        Input = Color3.fromRGB(30, 42, 65),
+    },
+
+    Crimson = {
+        Background = Color3.fromRGB(24, 14, 16),
+        Secondary = Color3.fromRGB(32, 18, 21),
+        Element = Color3.fromRGB(45, 25, 29),
+
+        Text = Color3.fromRGB(248, 235, 238),
+        SubText = Color3.fromRGB(175, 135, 142),
+
+        Accent = Color3.fromRGB(220, 38, 68),
+        AccentDark = Color3.fromRGB(155, 22, 45),
+
+        Stroke = Color3.fromRGB(255, 150, 165),
+
+        Notification = Color3.fromRGB(32, 18, 21),
+        Input = Color3.fromRGB(58, 32, 37),
+    },
+	
     Dark = {
         Background = Color3.fromRGB(22, 26, 23),
         Secondary = Color3.fromRGB(27, 31, 28),
@@ -53,7 +190,9 @@ Library.Themes = {
 
         Notification = Color3.fromRGB(245, 246, 245),
         Input = Color3.fromRGB(215, 218, 215),
-    }
+    },
+
+
 }
 
 Library.Theme = Library.Themes.Dark
@@ -195,6 +334,44 @@ local function MakeDraggable(frame, handle)
     end)
 end
 
+local function ResolveKeyCode(value)
+    if type(value) == "table" then
+        if value.Get then
+            value = value:Get()
+        else
+            value = value.Text
+        end
+    end
+
+    if typeof(value) == "EnumItem" and value.EnumType == Enum.KeyCode then
+        return value
+    end
+
+    if type(value) == "string" and value ~= "" then
+        return Enum.KeyCode[value]
+    end
+
+    return nil
+end
+
+local function BindKeybind(keybind, callback)
+    if keybind == nil then
+        return
+    end
+
+    return UserInputService.InputBegan:Connect(function(input, processed)
+        if processed then
+            return
+        end
+
+        if input.UserInputType == Enum.UserInputType.Keyboard
+            and input.KeyCode == ResolveKeyCode(keybind) then
+
+            callback()
+        end
+    end)
+end
+
 ----------------------------------------------------------------
 -- PLAYER INFO
 ----------------------------------------------------------------
@@ -284,7 +461,7 @@ function Library:CreateWindow(options)
     Sidebar = Create("Frame", {
         Name = "Sidebar",
 
-        Size = UDim2.fromOffset(204, 400),
+        Size = UDim2.new(0, 204, 1, 0),
 
         Position = UDim2.fromOffset(0, 0),
 
@@ -292,6 +469,8 @@ function Library:CreateWindow(options)
         BackgroundTransparency = 0.3,
 
         BorderSizePixel = 0,
+
+        ClipsDescendants = true,
 
         Parent = MainFrame,
     })
@@ -636,6 +815,7 @@ function Library:CreateWindow(options)
 
         Pages.Visible = false
         Sidebar.Visible = false
+        ContentFrame.Visible = false
     end
 
     function Window:Restore()
@@ -643,6 +823,7 @@ function Library:CreateWindow(options)
 
         Sidebar.Visible = true
         Pages.Visible = true
+        ContentFrame.Visible = true
 
         Tween(
             MainFrame,
@@ -660,7 +841,7 @@ function Library:CreateWindow(options)
     end
 
     function Window:SetKeybind(key)
-        Library.Options.Keybind = key
+        Library.Options.Keybind = ResolveKeyCode(key) or Library.Options.Keybind
     end
 
     ----------------------------------------------------------------
@@ -869,7 +1050,7 @@ function Library:CreateWindow(options)
 
                     BackgroundColor3 = Library.Theme.Element,
 
-                    Text = options.Name or "Button",
+                            Text = options.Name or options.name or "Button",
 
                     TextColor3 = Library.Theme.Text,
 
@@ -896,8 +1077,16 @@ function Library:CreateWindow(options)
                 end)
 
                 Button.MouseButton1Click:Connect(function()
-                    if options.Callback then
-                        options.Callback()
+                    local callback = options.Callback or options.callback
+                    if callback then
+                        callback()
+                    end
+                end)
+
+                BindKeybind(options.Keybind or options.keybind, function()
+                    local callback = options.Callback or options.callback
+                    if callback then
+                        callback()
                     end
                 end)
 
@@ -922,7 +1111,7 @@ function Library:CreateWindow(options)
 
                     BackgroundColor3 = Library.Theme.Element,
 
-                    Text = options.Name or "Toggle",
+                    Text = options.Name or options.name or "Toggle",
 
                     TextColor3 = Library.Theme.Text,
 
@@ -981,8 +1170,9 @@ function Library:CreateWindow(options)
 
                     Library.Flags[options.Flag or options.Name] = state
 
-                    if options.Callback then
-                        options.Callback(state)
+                    local callback = options.Callback or options.callback
+                    if callback then
+                        callback(state)
                     end
                 end
 
@@ -995,6 +1185,10 @@ function Library:CreateWindow(options)
                 end
 
                 Button.MouseButton1Click:Connect(function()
+                    Update(not state)
+                end)
+
+                BindKeybind(options.Keybind or options.keybind, function()
                     Update(not state)
                 end)
 
@@ -1319,12 +1513,14 @@ function Library:CreateWindow(options)
                     BackgroundColor3 = Library.Theme.Element,
 
                     PlaceholderText = options.Placeholder
+                        or options.placeholder
                         or options.Name
+                        or options.name
                         or "Enter text...",
 
                     PlaceholderColor3 = Library.Theme.SubText,
 
-                    Text = options.Default or "",
+                    Text = options.Default or options.default or "",
 
                     TextColor3 = Library.Theme.Text,
 
@@ -1346,17 +1542,21 @@ function Library:CreateWindow(options)
                 })
 
                 Box.FocusLost:Connect(function()
+                    Textbox.Text = Box.Text
+
                     Library.Flags[
                         options.Flag or options.Name
                     ] = Box.Text
 
-                    if options.Callback then
-                        options.Callback(Box.Text)
+                    local callback = options.Callback or options.callback
+                    if callback then
+                        callback(Box.Text)
                     end
                 end)
 
                 function Textbox:Set(value)
                     Box.Text = tostring(value)
+                    Textbox.Text = Box.Text
 
                     Library.Flags[
                         options.Flag or options.Name
@@ -1364,8 +1564,11 @@ function Library:CreateWindow(options)
                 end
 
                 function Textbox:Get()
-                    return Box.Text
+                    return Textbox.Text
                 end
+
+                Textbox.Text = Box.Text
+                Textbox.Instance = Box
 
                 return Textbox
             end
@@ -1378,6 +1581,9 @@ function Library:CreateWindow(options)
                 options = options or {}
 
                 local Graph = {}
+                local values = {}
+                local maxPoints = options.MaxPoints or 60
+                local updateConnection
 
                 local Frame = Create("Frame", {
                     Size = UDim2.new(1, 0, 0, 150),
@@ -1407,6 +1613,22 @@ function Library:CreateWindow(options)
                     Parent = Frame,
                 })
 
+                local ValueLabel = Create("TextLabel", {
+                    Size = UDim2.fromOffset(70, 25),
+                    Position = UDim2.new(1, -80, 0, 5),
+
+                    BackgroundTransparency = 1,
+
+                    TextColor3 = Library.Theme.SubText,
+
+                    Font = Enum.Font.SourceSans,
+                    TextSize = 13,
+
+                    TextXAlignment = Enum.TextXAlignment.Right,
+
+                    Parent = Frame,
+                })
+
                 local GraphArea = Create("Frame", {
                     Size = UDim2.new(1, -20, 1, -40),
                     Position = UDim2.fromOffset(10, 32),
@@ -1426,7 +1648,7 @@ function Library:CreateWindow(options)
                     end
                 end
 
-                function Graph:SetData(data)
+                local function Render(data)
                     ClearGraph()
 
                     if #data < 2 then
@@ -1489,6 +1711,68 @@ function Library:CreateWindow(options)
                             Parent = GraphArea,
                         })
                     end
+                end
+
+                function Graph:SetData(data)
+                    values = {}
+
+                    for index = math.max(1, #data - maxPoints + 1), #data do
+                        table.insert(values, data[index])
+                    end
+
+                    if values[#values] ~= nil then
+                        ValueLabel.Text = string.format("%.1f", values[#values])
+                    end
+
+                    Render(values)
+                end
+
+                function Graph:Push(value)
+                    if type(value) ~= "number" then
+                        return
+                    end
+
+                    table.insert(values, value)
+
+                    if #values > maxPoints then
+                        table.remove(values, 1)
+                    end
+
+                    ValueLabel.Text = string.format("%.1f", value)
+                    Render(values)
+                end
+
+                function Graph:Stop()
+                    if updateConnection then
+                        updateConnection:Disconnect()
+                        updateConnection = nil
+                    end
+                end
+
+                function Graph:Start(source)
+                    Graph:Stop()
+
+                    local elapsed = 0
+                    local updateInterval = options.UpdateInterval or 0.1
+
+                    updateConnection = RunService.Heartbeat:Connect(function(deltaTime)
+                        if not Frame.Parent then
+                            Graph:Stop()
+                            return
+                        end
+
+                        elapsed = elapsed + deltaTime
+
+                        if elapsed >= updateInterval then
+                            elapsed = 0
+                            local value = source(deltaTime)
+                            Graph:Push(value)
+                        end
+                    end)
+                end
+
+                if type(options.Source) == "function" then
+                    Graph:Start(options.Source)
                 end
 
                 return Graph
@@ -1832,7 +2116,7 @@ function Library:GetWindow()
 end
 
 function Library:SetKeybind(key)
-    Library.Options.Keybind = key
+    Library.Options.Keybind = ResolveKeyCode(key) or Library.Options.Keybind
 end
 
 function Library:GetFlag(flag)
