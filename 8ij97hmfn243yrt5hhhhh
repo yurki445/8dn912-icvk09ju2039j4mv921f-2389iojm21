@@ -1,0 +1,321 @@
+
+local ScreenGui1 = Instance.new("ScreenGui")
+ScreenGui1.Name = "ScreenGui"
+ScreenGui1.ResetOnSpawn = false
+ScreenGui1.DisplayOrder = 0
+ScreenGui1.IgnoreGuiInset = false
+ScreenGui1.Enabled = true
+ScreenGui1.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local Frame1 = Instance.new("Frame")
+Frame1.Name = "Frame"
+Frame1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame1.BackgroundTransparency = 0
+Frame1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame1.BorderSizePixel = 0
+Frame1.BorderMode = Enum.BorderMode.Outline
+
+-- Positioned on the left side of the screen (vertically centered with 10px padding)
+Frame1.AnchorPoint = Vector2.new(0, 0.5)
+Frame1.Position = UDim2.new(0, 10, 0.5, 0)
+
+Frame1.Size = UDim2.new(0, 126, 0, 327)
+Frame1.Rotation = 0
+Frame1.Visible = true
+Frame1.ZIndex = 1
+Frame1.ClipsDescendants = false
+Frame1.LayoutOrder = 0
+
+local TextButton1 = Instance.new("TextButton")
+TextButton1.Name = "TextButton"
+TextButton1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton1.BackgroundTransparency = 0
+TextButton1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton1.BorderSizePixel = 0
+TextButton1.BorderMode = Enum.BorderMode.Outline
+TextButton1.AnchorPoint = Vector2.new(0, 0)
+TextButton1.Position = UDim2.new(0, 0, 0.5412843823432922, 0)
+TextButton1.Size = UDim2.new(0, 126, 0, 50)
+TextButton1.Rotation = 0
+TextButton1.Visible = true
+TextButton1.ZIndex = 1
+TextButton1.ClipsDescendants = false
+TextButton1.LayoutOrder = 0
+TextButton1.Text = "TEST3"
+TextButton1.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton1.TextTransparency = 0
+TextButton1.TextSize = 14
+TextButton1.TextScaled = false
+TextButton1.TextWrapped = false
+TextButton1.Font = Enum.Font.SourceSans
+TextButton1.TextXAlignment = Enum.TextXAlignment.Center
+TextButton1.TextYAlignment = Enum.TextYAlignment.Center
+TextButton1.RichText = false
+TextButton1.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton1.TextStrokeTransparency = 1
+TextButton1.AutoButtonColor = true
+TextButton1.Parent = Frame1
+
+local TextButton2 = Instance.new("TextButton")
+TextButton2.Name = "TextButton"
+TextButton2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton2.BackgroundTransparency = 0
+TextButton2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton2.BorderSizePixel = 0
+TextButton2.BorderMode = Enum.BorderMode.Outline
+TextButton2.AnchorPoint = Vector2.new(0, 0)
+TextButton2.Position = UDim2.new(0, 0, 0.6941896080970764, 0)
+TextButton2.Size = UDim2.new(0, 126, 0, 50)
+TextButton2.Rotation = 0
+TextButton2.Visible = true
+TextButton2.ZIndex = 1
+TextButton2.ClipsDescendants = false
+TextButton2.LayoutOrder = 0
+TextButton2.Text = "TEST2"
+TextButton2.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton2.TextTransparency = 0
+TextButton2.TextSize = 14
+TextButton2.TextScaled = false
+TextButton2.TextWrapped = false
+TextButton2.Font = Enum.Font.SourceSans
+TextButton2.TextXAlignment = Enum.TextXAlignment.Center
+TextButton2.TextYAlignment = Enum.TextYAlignment.Center
+TextButton2.RichText = false
+TextButton2.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton2.TextStrokeTransparency = 1
+TextButton2.AutoButtonColor = true
+TextButton2.Parent = Frame1
+
+local TextButton3 = Instance.new("TextButton")
+TextButton3.Name = "TextButton1"
+TextButton3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton3.BackgroundTransparency = 0
+TextButton3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton3.BorderSizePixel = 0
+TextButton3.BorderMode = Enum.BorderMode.Outline
+TextButton3.AnchorPoint = Vector2.new(0, 0)
+TextButton3.Position = UDim2.new(0, 0, 0.8470947742462158, 0)
+TextButton3.Size = UDim2.new(0, 126, 0, 50)
+TextButton3.Rotation = 0
+TextButton3.Visible = true
+TextButton3.ZIndex = 1
+TextButton3.ClipsDescendants = false
+TextButton3.LayoutOrder = 0
+TextButton3.Text = "TEST1"
+TextButton3.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton3.TextTransparency = 0
+TextButton3.TextSize = 14
+TextButton3.TextScaled = false
+TextButton3.TextWrapped = false
+TextButton3.Font = Enum.Font.SourceSans
+TextButton3.TextXAlignment = Enum.TextXAlignment.Center
+TextButton3.TextYAlignment = Enum.TextYAlignment.Center
+TextButton3.RichText = false
+TextButton3.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton3.TextStrokeTransparency = 1
+TextButton3.AutoButtonColor = true
+TextButton3.Parent = Frame1
+
+local TextButton4 = Instance.new("TextButton")
+TextButton4.Name = "TextButton2"
+TextButton4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton4.BackgroundTransparency = 0
+TextButton4.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton4.BorderSizePixel = 0
+TextButton4.BorderMode = Enum.BorderMode.Outline
+TextButton4.AnchorPoint = Vector2.new(0, 0)
+TextButton4.Position = UDim2.new(0, 0, 0.38837921619415283, 0)
+TextButton4.Size = UDim2.new(0, 126, 0, 50)
+TextButton4.Rotation = 0
+TextButton4.Visible = true
+TextButton4.ZIndex = 1
+TextButton4.ClipsDescendants = false
+TextButton4.LayoutOrder = 0
+TextButton4.Text = "idk"
+TextButton4.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton4.TextTransparency = 0
+TextButton4.TextSize = 14
+TextButton4.TextScaled = false
+TextButton4.TextWrapped = false
+TextButton4.Font = Enum.Font.SourceSans
+TextButton4.TextXAlignment = Enum.TextXAlignment.Center
+TextButton4.TextYAlignment = Enum.TextYAlignment.Center
+TextButton4.RichText = false
+TextButton4.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton4.TextStrokeTransparency = 1
+TextButton4.AutoButtonColor = true
+TextButton4.Parent = Frame1
+
+local TextButton5 = Instance.new("TextButton")
+TextButton5.Name = "TextButton3"
+TextButton5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton5.BackgroundTransparency = 0
+TextButton5.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton5.BorderSizePixel = 0
+TextButton5.BorderMode = Enum.BorderMode.Outline
+TextButton5.AnchorPoint = Vector2.new(0, 0)
+TextButton5.Position = UDim2.new(0, 0, 0.23547400534152985, 0)
+TextButton5.Size = UDim2.new(0, 126, 0, 50)
+TextButton5.Rotation = 0
+TextButton5.Visible = true
+TextButton5.ZIndex = 1
+TextButton5.ClipsDescendants = false
+TextButton5.LayoutOrder = 0
+TextButton5.Text = "IY"
+TextButton5.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton5.TextTransparency = 0
+TextButton5.TextSize = 14
+TextButton5.TextScaled = false
+TextButton5.TextWrapped = false
+TextButton5.Font = Enum.Font.SourceSans
+TextButton5.TextXAlignment = Enum.TextXAlignment.Center
+TextButton5.TextYAlignment = Enum.TextYAlignment.Center
+TextButton5.RichText = false
+TextButton5.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton5.TextStrokeTransparency = 1
+TextButton5.AutoButtonColor = true
+TextButton5.Parent = Frame1
+
+local TextButton6 = Instance.new("TextButton")
+TextButton6.Name = "TextButton4"
+TextButton6.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton6.BackgroundTransparency = 0
+TextButton6.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton6.BorderSizePixel = 0
+TextButton6.BorderMode = Enum.BorderMode.Outline
+TextButton6.AnchorPoint = Vector2.new(0, 0)
+TextButton6.Position = UDim2.new(0, 0, 0.08256880939006805, 0)
+TextButton6.Size = UDim2.new(0, 126, 0, 50)
+TextButton6.Rotation = 0
+TextButton6.Visible = true
+TextButton6.ZIndex = 1
+TextButton6.ClipsDescendants = false
+TextButton6.LayoutOrder = 0
+TextButton6.Text = "anitafk"
+TextButton6.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton6.TextTransparency = 0
+TextButton6.TextSize = 14
+TextButton6.TextScaled = false
+TextButton6.TextWrapped = false
+TextButton6.Font = Enum.Font.SourceSans
+TextButton6.TextXAlignment = Enum.TextXAlignment.Center
+TextButton6.TextYAlignment = Enum.TextYAlignment.Center
+TextButton6.RichText = false
+TextButton6.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton6.TextStrokeTransparency = 1
+TextButton6.AutoButtonColor = true
+TextButton6.Parent = Frame1
+
+local TextButton7 = Instance.new("TextButton")
+TextButton7.Name = "close"
+TextButton7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton7.BackgroundTransparency = 0
+TextButton7.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton7.BorderSizePixel = 0
+TextButton7.BorderMode = Enum.BorderMode.Outline
+TextButton7.AnchorPoint = Vector2.new(0, 0)
+TextButton7.Position = UDim2.new(0.5, 0, 0, 0)
+TextButton7.Size = UDim2.new(0, 63, 0, 27)
+TextButton7.Rotation = 0
+TextButton7.Visible = true
+TextButton7.ZIndex = 1
+TextButton7.ClipsDescendants = false
+TextButton7.LayoutOrder = 0
+TextButton7.Text = "Close"
+TextButton7.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton7.TextTransparency = 0
+TextButton7.TextSize = 14
+TextButton7.TextScaled = false
+TextButton7.TextWrapped = false
+TextButton7.Font = Enum.Font.SourceSans
+TextButton7.TextXAlignment = Enum.TextXAlignment.Center
+TextButton7.TextYAlignment = Enum.TextYAlignment.Center
+TextButton7.RichText = false
+TextButton7.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton7.TextStrokeTransparency = 1
+TextButton7.AutoButtonColor = true
+TextButton7.Parent = Frame1
+
+local TextButton8 = Instance.new("TextButton")
+TextButton8.Name = "hide"
+TextButton8.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton8.BackgroundTransparency = 0
+TextButton8.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton8.BorderSizePixel = 0
+TextButton8.BorderMode = Enum.BorderMode.Outline
+TextButton8.AnchorPoint = Vector2.new(0, 0)
+TextButton8.Position = UDim2.new(0, 0, 0, 0)
+TextButton8.Size = UDim2.new(0, 63, 0, 26)
+TextButton8.Rotation = 0
+TextButton8.Visible = true
+TextButton8.ZIndex = 1
+TextButton8.ClipsDescendants = false
+TextButton8.LayoutOrder = 0
+TextButton8.Text = "Hide"
+TextButton8.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton8.TextTransparency = 0
+TextButton8.TextSize = 14
+TextButton8.TextScaled = false
+TextButton8.TextWrapped = false
+TextButton8.Font = Enum.Font.SourceSans
+TextButton8.TextXAlignment = Enum.TextXAlignment.Center
+TextButton8.TextYAlignment = Enum.TextYAlignment.Center
+TextButton8.RichText = false
+TextButton8.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+TextButton8.TextStrokeTransparency = 1
+TextButton8.AutoButtonColor = true
+TextButton8.Parent = Frame1
+
+Frame1.Parent = ScreenGui1
+
+-- PARENT TO PLAYER GUI
+ScreenGui1.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- BUTTON FUNCTIONS --
+
+TextButton1.MouseButton1Click:Connect(function()
+	print("Button 1 clicked")
+end)
+
+TextButton2.MouseButton1Click:Connect(function()
+	print("Button 2 clicked")
+end)
+
+TextButton3.MouseButton1Click:Connect(function()
+	print("Button 3 clicked")
+end)
+
+TextButton4.MouseButton1Click:Connect(function()
+	for _, player in game.Players:GetPlayers() do
+	if player.Character then Instance.new("Highlight", player.Character) end
+end
+end)
+
+TextButton5.MouseButton1Click:Connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+local button = script.Parent -- Assuming the script is placed directly inside TextButton6
+
+TextButton6.MouseButton1Click:Connect(function()
+    local VirtualUser = game:GetService("VirtualUser")
+    local player = game:GetService("Players").LocalPlayer
+
+    -- Connect to the Idled event when the button is clicked
+    player.Idled:Connect(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new(0, 0))
+    end)
+    
+    
+end)
+
+-- Close Button (Destroys the GUI)
+TextButton7.MouseButton1Click:Connect(function()
+	ScreenGui1:Destroy()
+end)
+
+-- Hide Button (Toggles visibility of options frame)
+TextButton8.MouseButton1Click:Connect(function()
+	Frame1.Visible = not Frame1.Visible
+end)
